@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header"
-import { ChevronDown, MessageSquareText, Send, ThumbsUp, Heart } from 'lucide-react';
+import { ChevronDown, MessageSquare, Send } from 'lucide-react';
 
 interface Question {
   id: number;
@@ -11,66 +11,117 @@ interface Question {
   date: string;
 }
 
-const QuestionItem = ({ question, isOpen, onToggle }: { question: Question, isOpen: boolean, onToggle: () => void }) => (
-  <div className="bg-white rounded-lg shadow-sm">
-    <div
-      className="flex justify-between items-center p-4 cursor-pointer"
-      onClick={onToggle}
-    >
-      <div className="flex-grow">
-        <p className="text-gray-500 text-sm">{question.id === 1 ? '질문 내용' : `질문내용 질문내용 질문내용 질문내용 질문내용 질문내용...`}</p>
-        {isOpen && question.id === 1 && <p className="text-gray-800 mt-2">질문내용</p>}
-      </div>
-      <div className="flex items-center space-x-4">
-        <p className="text-gray-500 text-sm">{question.date}</p>
-        <ChevronDown
-          className={`transform transition-transform ${
-            isOpen ? "rotate-180" : ""
-          }`}
-        />
-      </div>
-    </div>
-    {isOpen && (
-      <div className="p-4 bg-gray-50">
-        <button className="text-xs text-gray-500 float-right">질문 신고</button>
-        <div className="mt-4">
-            <p className="font-semibold">티키 01</p>
-            <p className="text-xs text-gray-500">2024.00.00 오전 00:00</p>
+interface Comment {
+  author: string;
+  time: string;
+  text: string;
+}
+
+const QuestionItem = ({ question, isOpen, onToggle }: { question: Question, isOpen: boolean, onToggle: () => void }) => {
+  const [isLiked, setIsLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(1);
+  const [comments, setComments] = useState<Comment[]>([
+    { author: '티키 01', time: '2024.00.00 오전 00:00', text: '댓글 내용' },
+    { author: '티키 01', time: '2024.00.00 오전 00:00', text: '댓글 내용' },
+  ]);
+  const [newComment, setNewComment] = useState("");
+
+  const handleLikeClick = () => {
+    setLikeCount(isLiked ? likeCount - 1 : likeCount + 1);
+    setIsLiked(!isLiked);
+  };
+
+  const handleCommentSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newComment.trim() === "") return;
+
+    setComments([
+      ...comments,
+      { author: '나 (학생)', time: '2024.07.16 오후 03:30', text: newComment }
+    ]);
+    setNewComment("");
+  };
+
+  const userHasCommented = comments.some(comment => comment.author === '나 (학생)');
+
+  return (
+    <div className="bg-white rounded-lg shadow-sm">
+      <div
+        className="flex justify-between items-center p-4 cursor-pointer"
+        onClick={onToggle}
+      >
+        <div className="flex-grow">
+          <p className="text-gray-500 text-sm">{question.id === 1 ? '질문 내용' : `질문내용 질문내용 질문내용 질문내용 질문내용 질문내용...`}</p>
+          {isOpen && question.id === 1 && <p className="text-gray-800 mt-2">질문내용</p>}
         </div>
-        
-        <div className="mt-4 p-4 bg-white rounded-md">
-          <p className="font-semibold text-blue-600">티키 (교수님)</p>
-          <p className="text-xs text-gray-500">2024.00.00 오전 00:00</p>
-          <p className="mt-2">교수님 답변 교수님 답변 교수님 답변 교수님 답변 교수님 답변</p>
-          <div className="flex items-center mt-4 text-gray-500">
-            <Heart size={16} className="mr-1" /> 1
-            <ThumbsUp size={16} className="ml-4 mr-1" /> 2
+        <div className="flex items-center space-x-4">
+          <p className="text-gray-500 text-sm">{question.date}</p>
+          <ChevronDown
+            className={`transform transition-transform ${
+              isOpen ? "rotate-180" : ""
+            }`}
+          />
+        </div>
+      </div>
+      {isOpen && (
+        <div className="p-4 bg-gray-50">
+          <button className="text-xs text-gray-500 float-right">질문 신고</button>
+          <div className="mt-4">
+              <p className="font-semibold">티키 01</p>
+              <p className="text-xs text-gray-500">2024.00.00 오전 00:00</p>
           </div>
-        </div>
-
-        <div className="mt-4 space-y-4">
-            <div className="p-4 bg-white rounded-md">
-                <p className="font-semibold">티키 01</p>
-                <p className="text-xs text-gray-500">2024.00.00 오전 00:00</p>
-                <p className="mt-2">댓글 내용</p>
+          
+          <div className="mt-4 p-4 bg-white rounded-md">
+            <p className="font-semibold text-blue-600">티키 (교수님)</p>
+            <p className="text-xs text-gray-500">2024.00.00 오전 00:00</p>
+            <p className="mt-2">교수님 답변 교수님 답변 교수님 답변 교수님 답변 교수님 답변</p>
+            <div className="flex items-center mt-4 text-gray-500">
+                <button onClick={handleLikeClick} className="flex items-center focus:outline-none">
+                    <img 
+                        src={isLiked ? '/likeIcon.png' : '/normalLikeIcon.png'}
+                        alt="Like"
+                        className="w-4 h-4 mr-1"
+                    />
+                    {likeCount}
+                </button>
+                <div className="flex items-center ml-4">
+                    <img
+                        src={userHasCommented ? '/messageCircleDots.png' : '/normalMessageCircleDots.png'}
+                        alt="Comments"
+                        className="w-4 h-4 mr-1"
+                    />
+                    {comments.length}
+                </div>
             </div>
-             <div className="p-4 bg-white rounded-md">
-                <p className="font-semibold">티키 01</p>
-                <p className="text-xs text-gray-500">2024.00.00 오전 00:00</p>
-                <p className="mt-2">댓글 내용</p>
-            </div>
-        </div>
+          </div>
 
-        <div className="mt-4 flex">
-          <Input type="text" placeholder="댓글을 입력하세요." className="flex-grow"/>
-          <Button variant="ghost" size="icon">
-            <Send />
-          </Button>
+          <div className="mt-4 space-y-4">
+              {comments.map((comment, index) => (
+                <div key={index} className="p-4 bg-white rounded-md">
+                    <p className="font-semibold">{comment.author}</p>
+                    <p className="text-xs text-gray-500">{comment.time}</p>
+                    <p className="mt-2">{comment.text}</p>
+                </div>
+              ))}
+          </div>
+
+          <form onSubmit={handleCommentSubmit} className="mt-4 flex">
+            <Input 
+              type="text" 
+              placeholder="댓글을 입력하세요." 
+              className="flex-grow"
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+            />
+            <Button variant="ghost" size="icon" type="submit">
+              <Send />
+            </Button>
+          </form>
         </div>
-      </div>
-    )}
-  </div>
-);
+      )}
+    </div>
+  );
+};
 
 
 export function QAStudent() {
@@ -113,7 +164,7 @@ export function QAStudent() {
           <main>
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                    <MessageSquareText className="w-6 h-6 text-[#191A1C]" />
+                    <MessageSquare className="w-6 h-6 text-[#191A1C]" />
                     <h2 className="text-xl font-bold text-[#191A1C]">질문 목록</h2>
                 </div>
               <div className="flex space-x-2">
