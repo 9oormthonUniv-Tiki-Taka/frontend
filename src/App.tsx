@@ -1,11 +1,11 @@
 import Header from "./components/Header";
-import LoadingPage from "./pages/LoadingPage";
+import ListProfessor from "./pages/ListProfessor";
 
 function App() {
   return (
     <div className="min-h-screen bg-white">
       <Header />
-      <LoadingPage />
+      <ListProfessor />
     </div>
   );
 }
