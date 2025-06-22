@@ -98,8 +98,8 @@ export function QAStudent() {
           </div>
 
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold">과목 이름</h1>
-          <p className="text-gray-600 mt-2">내가 수강하는 과목의 질문 목록을 확인 할 수 있어요.</p>
+          <h1 className="text-2xl font-bold mb-6">과목 이름</h1>
+          <p className="text-gray-600">내가 수강하는 과목의 질문 목록을 확인 할 수 있어요.</p>
         </div>
 
         <div className="max-w-3xl mx-auto mb-8">
@@ -153,7 +153,7 @@ export function QAStudent() {
       </div>
 
         <button className="fixed top-1/2 -translate-y-1/2 right-10 bg-blue-500 text-white rounded-full p-4 shadow-lg">
-            <MessageSquareText size={24} />
+            <img src="/FABlogo.png" alt="New Question" className="w-6 h-6" />
         </button>
       <Footer />
     </div>

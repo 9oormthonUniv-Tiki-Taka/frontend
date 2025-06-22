@@ -72,7 +72,7 @@ export function QAProfessor() {
                 </div>
 
                 <div className="text-center mb-12">
-                    <h1 className="text-4xl font-bold text-gray-800 mb-2">강의 이름</h1>
+                    <h1 className="text-4xl font-bold text-gray-800 mb-6">강의 이름</h1>
                     <p className="text-gray-600">학생들의 질문을 답변하고 관리해보세요.</p>
                 </div>
 
@@ -158,7 +158,7 @@ export function QAProfessor() {
             <ReportGuide open={reportModalOpen} onClose={() => setReportModalOpen(false)} />
 
             <button className="fixed top-1/2 -translate-y-1/2 right-10 bg-blue-500 text-white rounded-full p-4 shadow-lg">
-                <MessageSquareText size={24} />
+                <img src="/FABlogo.png" alt="New Question" className="w-6 h-6" />
             </button>
 
             <Footer />
