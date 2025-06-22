@@ -90,12 +90,12 @@ export function QAStudent() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F2F6F9]">
-    <Header />
-      <div className="container mx-auto px-8 py-6">
-        <div className="text-sm mb-8">
-          <span className="text-[#B1BAC1]">나의 수강 과목  &gt; </span> <span className="text-[#464B51]">과목 이름 (강의실 이동)</span>
-        </div>
+    <div className="absolute top-0 left-0 w-full min-h-screen flex flex-col bg-[#F2F6F9]">
+      <Header />
+        <div className="container mx-auto px-8 py-6">
+          <div className="text-sm mb-8">
+            <span className="text-[#B1BAC1]">나의 수강 과목  &gt; </span> <span className="text-[#464B51]">과목 이름 (강의실 이동)</span>
+          </div>
 
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold">과목 이름</h1>

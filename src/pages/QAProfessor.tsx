@@ -62,7 +62,7 @@ export function QAProfessor() {
             : questions.filter((q) => q.status === filter);
 
     return (
-        <div className="min-h-screen bg-[#F2F6F9]">
+        <div className="absolute top-0 left-0 w-full min-h-screen flex flex-col bg-[#F2F6F9]">
             <Header />
             <div className="container mx-auto px-8 py-6">
                 <div className="flex items-center gap-2 text-sm text-gray-500 mb-8">

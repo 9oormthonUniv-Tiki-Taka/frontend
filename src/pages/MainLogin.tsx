@@ -36,7 +36,7 @@ export function MainLogin() {
 
     return (
         <div
-            className="absolute inset-0 z-0 bg-cover bg-center"
+            className="absolute top-0 left-0 w-full min-h-screen flex flex-col"
             style={{ backgroundImage: "url('./mainBackground.png')" }}
         >
             {/* header */}
