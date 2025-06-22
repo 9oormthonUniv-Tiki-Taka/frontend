@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header"
-import { ChevronDown, MessageSquare, Send } from 'lucide-react';
+import { ChevronDown, Send } from 'lucide-react';
 
 interface Question {
   id: number;
@@ -71,20 +71,12 @@ const QuestionItem = ({ question, isOpen, onToggle }: { question: Question, isOp
               <p className="text-xs text-gray-500">2024.00.00 오전 00:00</p>
           </div>
           
-          <div className="mt-4 p-4 bg-white rounded-md">
-            <p className="font-semibold text-blue-600">티키 (교수님)</p>
-            <p className="text-xs text-gray-500">2024.00.00 오전 00:00</p>
+          <div className="mt-4 p-4 bg-[#F5F9FC] rounded-md">
+            <p className="text-s text-[#646B72]">티키 (교수님)</p>
+            <p className="text-xs text-[#C8CFD6]">2024.00.00 오전 00:00</p>
             <p className="mt-2">교수님 답변 교수님 답변 교수님 답변 교수님 답변 교수님 답변</p>
             <div className="flex items-center mt-4 text-gray-500">
-                <button onClick={handleLikeClick} className="flex items-center focus:outline-none">
-                    <img 
-                        src={isLiked ? '/likeIcon.png' : '/normalLikeIcon.png'}
-                        alt="Like"
-                        className="w-4 h-4 mr-1"
-                    />
-                    {likeCount}
-                </button>
-                <div className="flex items-center ml-4">
+                <div className="flex items-center">
                     <img
                         src={userHasCommented ? '/messageCircleDots.png' : '/normalMessageCircleDots.png'}
                         alt="Comments"
@@ -92,6 +84,14 @@ const QuestionItem = ({ question, isOpen, onToggle }: { question: Question, isOp
                     />
                     {comments.length}
                 </div>
+                <button onClick={handleLikeClick} className="flex items-center ml-4 focus:outline-none">
+                    <img 
+                        src={isLiked ? '/likeIcon.png' : '/normalLikeIcon.png'}
+                        alt="Like"
+                        className="w-4 h-4 mr-1"
+                    />
+                    {likeCount}
+                </button>
             </div>
           </div>
 
@@ -109,7 +109,7 @@ const QuestionItem = ({ question, isOpen, onToggle }: { question: Question, isOp
             <Input 
               type="text" 
               placeholder="댓글을 입력하세요." 
-              className="flex-grow"
+              className="flex-grow bg-[#F5F9FC]"
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
             />
@@ -162,27 +162,25 @@ export function QAStudent() {
 
         <div className="rounded-lg p-8">
           <main>
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                    <MessageSquare className="w-6 h-6 text-[#191A1C]" />
-                    <h2 className="text-xl font-bold text-[#191A1C]">질문 목록</h2>
-                </div>
-              <div className="flex space-x-2">
-                <Button
-                  variant={activeTab === "latest" ? "default" : "ghost"}
-                  onClick={() => setActiveTab("latest")}
-                  className={activeTab === 'latest' ? 'bg-blue-500 text-white' : 'text-gray-500'}
-                >
-                  최신순
-                </Button>
-                <Button
-                  variant={activeTab === "oldest" ? "default" : "ghost"}
-                  onClick={() => setActiveTab("oldest")}
-                  className={activeTab === 'oldest' ? 'bg-blue-500 text-white' : 'text-gray-500'}
-                >
-                  오래된 순
-                </Button>
-              </div>
+            <div className="flex items-center gap-2 mb-6">
+              <img src="/SWMIcon.png" alt="SWM Icon" className="w-6 h-6" />
+              <h2 className="text-xl font-bold text-[#191A1C]">질문 목록</h2>
+            </div>
+            <div className="flex justify-start space-x-2 mb-6">
+              <Button
+                variant={activeTab === "latest" ? "default" : "ghost"}
+                onClick={() => setActiveTab("latest")}
+                className={activeTab === 'latest' ? 'bg-[#3B6CFF] text-white hover:bg-[#E9EEF2]' : 'text-[#323639] hover:bg-[#E9EEF2]'}
+              >
+                최신순
+              </Button>
+              <Button
+                variant={activeTab === "oldest" ? "default" : "ghost"}
+                onClick={() => setActiveTab("oldest")}
+                className={activeTab === 'oldest' ? 'bg-[#3B6CFF] text-white hover:bg-[#E9EEF2]' : 'text-[#323639] hover:bg-[#E9EEF2]'}
+              >
+                오래된 순
+              </Button>
             </div>
 
             <div className="space-y-4">
