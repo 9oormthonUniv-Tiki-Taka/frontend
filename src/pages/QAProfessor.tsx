@@ -1,4 +1,4 @@
-import { ChevronDown, ChevronRight, MessageSquareQuote } from "lucide-react";
+import { ChevronDown, ChevronRight, MessageSquareText } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -79,8 +79,8 @@ export function QAProfessor() {
                 <div className="rounded-lg p-8">
                     <div className="flex justify-between items-center mb-6">
                         <div className="flex items-center gap-2">
-                            <MessageSquareQuote className="w-6 h-6 text-gray-700" />
-                            <h2 className="text-xl font-bold text-gray-800">질문 목록</h2>
+                            <MessageSquareText className="w-6 h-6 text-[#191A1C]" />
+                            <h2 className="text-xl font-bold text-[#191A1C]">질문 목록</h2>
                         </div>
                         <div className="flex items-center gap-4 text-sm text-gray-500">
                             <button 
