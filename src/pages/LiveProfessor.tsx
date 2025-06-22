@@ -95,8 +95,8 @@ export default function LiveProfessor() {
                 </Button>
             </div>
 
-            <main className="w-full max-w-full flex-1">
-                {qas.length === 0 ? (
+            <main className="w-full flex-1 flex justify-center">
+                <div className="w-full max-w-[1000px] px-4">                {qas.length === 0 ? (
                     <div className="flex flex-1 items-center justify-center text-center px-8">
                         <p className="text-2xl font-semibold text-gray-600">아직 올라온 질문이 없어요 🥲</p>
                     </div>
@@ -173,6 +173,7 @@ export default function LiveProfessor() {
                         </div>
                     </div>
                 )}
+                </div>
             </main>
             <ReportGuide open={reportModalOpen} onClose={() => setReportModalOpen(false)} />
 
