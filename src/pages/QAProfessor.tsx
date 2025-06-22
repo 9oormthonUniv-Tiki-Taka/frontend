@@ -1,9 +1,10 @@
-import { Bell, ChevronDown, ChevronRight, LogOut, MessageSquareQuote, Settings } from "lucide-react";
+import { ChevronDown, ChevronRight, MessageSquareText } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import ReportGuide from "@/components/ReportGuide"
 import ReplyGuide from "@/components/ReplyGuide";
+import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 
 type QuestionStatus = "전체" | "미응답" | "응답 완료";
@@ -61,25 +62,8 @@ export function QAProfessor() {
             : questions.filter((q) => q.status === filter);
 
     return (
-        <div className="min-h-screen bg-[#F2F6F9]">
-            <header className="bg-transparent px-8 py-4 w-full">
-                <div className="flex items-center justify-between w-full">
-                    <div className="flex items-center gap-2">
-                        <img src="/logo.png" alt="Logo" className="h-8 w-auto" />
-                    </div>
-                <div className="flex items-center gap-6 text-gray-600">
-                        <button><Bell className="w-6 h-6" /></button>
-                        <button><Settings className="w-6 h-6" /></button>
-                        <Button
-                            variant="outline"
-                            className="flex items-center gap-2 border-[#DCDDE0] text-[#4E5257]"
-                        >
-                        로그아웃 <LogOut className="w-4 h-4" />
-                        </Button>
-                    </div>
-                </div>
-            </header>
-
+        <div className="absolute top-0 left-0 w-full min-h-screen flex flex-col bg-[#F2F6F9]">
+            <Header />
             <div className="container mx-auto px-8 py-6">
                 <div className="flex items-center gap-2 text-sm text-gray-500 mb-8">
                     <span>나의 강의 리스트</span>
@@ -88,15 +72,15 @@ export function QAProfessor() {
                 </div>
 
                 <div className="text-center mb-12">
-                    <h1 className="text-4xl font-bold text-gray-800 mb-2">강의 이름</h1>
+                    <h1 className="text-4xl font-bold text-gray-800 mb-6">강의 이름</h1>
                     <p className="text-gray-600">학생들의 질문을 답변하고 관리해보세요.</p>
                 </div>
 
                 <div className="rounded-lg p-8">
                     <div className="flex justify-between items-center mb-6">
                         <div className="flex items-center gap-2">
-                            <MessageSquareQuote className="w-6 h-6 text-gray-700" />
-                            <h2 className="text-xl font-bold text-gray-800">질문 목록</h2>
+                            <MessageSquareText className="w-6 h-6 text-[#191A1C]" />
+                            <h2 className="text-xl font-bold text-[#191A1C]">질문 목록</h2>
                         </div>
                         <div className="flex items-center gap-4 text-sm text-gray-500">
                             <button 
@@ -172,6 +156,10 @@ export function QAProfessor() {
 
             <ReplyGuide open={replyModalOpen} onClose={() => setReplyModalOpen(false)} />
             <ReportGuide open={reportModalOpen} onClose={() => setReportModalOpen(false)} />
+
+            <button className="fixed top-1/2 -translate-y-1/2 right-10 bg-blue-500 text-white rounded-full p-4 shadow-lg">
+                <img src="/FABlogo.png" alt="New Question" className="w-6 h-6" />
+            </button>
 
             <Footer />
         </div>
