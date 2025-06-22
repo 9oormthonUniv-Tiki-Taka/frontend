@@ -1,12 +1,13 @@
-import React from "react";
-import LoadingPage from "./components/LoadingPage";
+import Header from "./components/Header";
+import LoadingPage from "./pages/LoadingPage";
 
-const App = () => {
+function App() {
   return (
-    <div className="w-full h-full">
+    <div className="min-h-screen">
+      <Header />
       <LoadingPage />
     </div>
   );
-};
+}
 
 export default App;
