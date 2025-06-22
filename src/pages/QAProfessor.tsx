@@ -1,9 +1,10 @@
-import { Bell, ChevronDown, ChevronRight, LogOut, MessageSquareQuote, Settings } from "lucide-react";
+import { ChevronDown, ChevronRight, MessageSquareQuote } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import ReportGuide from "@/components/ReportGuide"
 import ReplyGuide from "@/components/ReplyGuide";
+import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 
 type QuestionStatus = "전체" | "미응답" | "응답 완료";
@@ -62,24 +63,7 @@ export function QAProfessor() {
 
     return (
         <div className="min-h-screen bg-[#F2F6F9]">
-            <header className="bg-transparent px-8 py-4 w-full">
-                <div className="flex items-center justify-between w-full">
-                    <div className="flex items-center gap-2">
-                        <img src="/logo.png" alt="Logo" className="h-8 w-auto" />
-                    </div>
-                <div className="flex items-center gap-6 text-gray-600">
-                        <button><Bell className="w-6 h-6" /></button>
-                        <button><Settings className="w-6 h-6" /></button>
-                        <Button
-                            variant="outline"
-                            className="flex items-center gap-2 border-[#DCDDE0] text-[#4E5257]"
-                        >
-                        로그아웃 <LogOut className="w-4 h-4" />
-                        </Button>
-                    </div>
-                </div>
-            </header>
-
+            <Header />
             <div className="container mx-auto px-8 py-6">
                 <div className="flex items-center gap-2 text-sm text-gray-500 mb-8">
                     <span>나의 강의 리스트</span>
