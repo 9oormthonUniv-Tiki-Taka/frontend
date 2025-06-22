@@ -154,8 +154,8 @@ export function QAStudent() {
         </div>
 
         <div className="max-w-3xl mx-auto mb-8">
-            <div className="relative">
-                <Input type="search" placeholder="검색어를 입력하세요." className="w-full pl-4 pr-12 h-12 rounded-full border-[#3B6CFF] border-2 focus-visible:ring-0 focus-visible:ring-offset-0 focus:outline-none focus:ring-0" />
+            <div className="relative flex items-center">
+                <Input type="search" placeholder="검색어를 입력하세요." className="w-full pl-4 pr-12 h-12 rounded-full border-[#3B6CFF] border-2 focus-visible:ring-0 focus-visible:ring-offset-0 focus:outline-none focus:ring-0 bg-white" />
                 <svg className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#323639" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
             </div>
         </div>
