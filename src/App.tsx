@@ -3,9 +3,11 @@ import ListProfessor from "./pages/ListProfessor";
 
 function App() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#F8FBFF]">
       <Header />
-      <ListProfessor />
+      <main className="max-w-screen-lg mx-auto">
+        <ListProfessor />
+      </main>
     </div>
   );
 }
