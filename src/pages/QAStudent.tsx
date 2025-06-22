@@ -152,7 +152,7 @@ export function QAStudent() {
         </div>
       </div>
 
-        <button className="fixed bottom-24 right-10 bg-blue-500 text-white rounded-full p-4 shadow-lg">
+        <button className="fixed top-1/2 -translate-y-1/2 right-10 bg-blue-500 text-white rounded-full p-4 shadow-lg">
             <MessageSquareText size={24} />
         </button>
       <Footer />
