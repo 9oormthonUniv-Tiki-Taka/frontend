@@ -1,4 +1,5 @@
 import { Button } from "./ui/button";
+import ProfilePopover from "./ProfilePopover";
 
 export default function Header() {
     return (
@@ -15,9 +16,7 @@ export default function Header() {
                     <Button variant="ghost" size="icon">
                         <img src="/settingIcon.png" alt="setting" className="h-6 w-6" />
                     </Button>
-                    <Button variant="ghost" className="p-3 h-auto">
-                        <img src="/logoutIcon.png" alt="logout" className="h-8 w-auto" />
-                    </Button>
+                    <ProfilePopover />
                 </div>
             </div>
         </header>
