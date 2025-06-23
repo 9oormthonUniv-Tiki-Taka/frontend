@@ -18,7 +18,7 @@ const questions = [
     },
     {
         id: 2,
-        content: "질문 내용: 질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용...",
+        content: "질문 내용: 질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용...",
         date: "2025.00.00",
         status: "응답 완료",
     },
@@ -135,7 +135,7 @@ export function QAProfessor() {
                                 </div>
                                 <div className="flex items-center gap-6">
                                     <span className="text-sm text-gray-500">{q.date}</span>
-                                    <span className={`px-3 py-1 text-xs font-semibold rounded-full ${q.status === '응답 완료' ? 'bg-blue-100 text-blue-800' : 'bg-gray-200 text-gray-800'}`}>
+                                    <span className={`w-20 text-center py-1 text-xs font-semibold rounded-lg text-white ${q.status === '응답 완료' ? 'bg-[#5D89FF]' : 'bg-[#828C95]'}`}>
                                         {q.status}
                                     </span>
                                     <button>
