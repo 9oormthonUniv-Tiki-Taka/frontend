@@ -1,24 +1,13 @@
-import { Routes, Route } from "react-router-dom";
-import ListProfessor from "./pages/ListProfessor";
-import LiveProfessor from "./pages/LiveProfessor";
-import LiveStudent from "./pages/LiveStudent";
-import MainLogin from "./pages/MainLogin";
-import QAProfessor from "./pages/QAProfessor";
-import QAStudent from "./pages/QAStudent";
+import Header from "./components/Header";
+import MyPage from "./pages/MyPage";
 
+// App.tsx
 function App() {
-	return (
-		<>
-			<Routes>
-				<Route path="/" element={<MainLogin />} />
-				<Route path="/listp" element={<ListProfessor />} />
-				<Route path="/livep" element={<LiveProfessor />} />
-				<Route path="/lives" element={<LiveStudent />} />
-				<Route path="/qp" element={<QAProfessor />} />
-				<Route path="/qs" element={<QAStudent />} />
-			</Routes>
-		</>
-	);
+  return (
+    <div className="min-h-screen w-full bg-[#F2F6F9]">
+      <Header />
+      <MyPage />
+    </div>
+  );
 }
-
 export default App;
