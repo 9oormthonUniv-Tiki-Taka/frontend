@@ -170,14 +170,14 @@ export function QAStudent() {
               <Button
                 variant={activeTab === "latest" ? "default" : "ghost"}
                 onClick={() => setActiveTab("latest")}
-                className={activeTab === 'latest' ? 'bg-[#3B6CFF] text-white hover:bg-[#E9EEF2]' : 'text-[#323639] hover:bg-[#E9EEF2]'}
+                className={`${activeTab === 'latest' ? 'bg-[#3B6CFF] text-white hover:bg-[#E9EEF2]' : 'text-[#323639] hover:bg-[#E9EEF2] border border-gray-300'}`}
               >
                 최신순
               </Button>
               <Button
                 variant={activeTab === "oldest" ? "default" : "ghost"}
                 onClick={() => setActiveTab("oldest")}
-                className={activeTab === 'oldest' ? 'bg-[#3B6CFF] text-white hover:bg-[#E9EEF2]' : 'text-[#323639] hover:bg-[#E9EEF2]'}
+                className={`${activeTab === 'oldest' ? 'bg-[#3B6CFF] text-white hover:bg-[#E9EEF2]' : 'text-[#323639] hover:bg-[#E9EEF2] border border-gray-300'}`}
               >
                 오래된 순
               </Button>

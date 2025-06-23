@@ -18,7 +18,7 @@ const questions = [
     },
     {
         id: 2,
-        content: "질문 내용: 질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용...",
+        content: "질문 내용: 질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용...",
         date: "2025.00.00",
         status: "응답 완료",
     },
@@ -88,7 +88,7 @@ export function QAProfessor() {
                                     if (selectedQuestionIds.length > 0) setReplyModalOpen(true);
                                 }}
                                 disabled={selectedQuestionIds.length === 0}
-                                className="hover:text-gray-800 disabled:text-gray-400"
+                                className="hover:text-gray-800 disabled:text-[#191A1C] hover:underline"
                             >
                                 일괄 응답
                             </button>
@@ -97,7 +97,7 @@ export function QAProfessor() {
                                     if (selectedQuestionIds.length > 0) setReportModalOpen(true);
                                 }}
                                 disabled={selectedQuestionIds.length === 0}
-                                className="hover:text-gray-800 disabled:text-gray-400 disabled:cursor-not-allowed"
+                                className="hover:text-gray-800 disabled:text-[#191A1C] disabled:cursor-not-allowed hover:underline"
                             >
                                 질문 신고
                             </button>
@@ -112,9 +112,9 @@ export function QAProfessor() {
                                 onClick={() => setFilter(f)}
                                 className={`
                                     ${filter === f
-                                        ? "bg-[#3B6CFF] text-white"
-                                        : "bg-white text-gray-700 border-gray-300"}
-                                    rounded-full px-5 py-2 text-sm font-semibold
+                                        ? "bg-[#3B6CFF] text-white hover:bg-[#E9EEF2] hover:text-black border border-transparent"
+                                        : "bg-transparent text-gray-700 border-gray-300"}
+                                    rounded-lg px-5 py-2 text-sm font-semibold
                                 `}
                             >
                                 {f}
