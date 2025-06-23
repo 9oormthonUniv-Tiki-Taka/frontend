@@ -173,39 +173,71 @@ export default function LiveStudent() {
                                                     className={`group relative cursor-pointer border-none shadow-none rounded-tl-none ${selectedQuestionId === qa.id ? "ring-1 ring-[#3B6CFF]" : ""}`}
                                                     onClick={() => handleSelectQuestion(qa.id)}
                                                 >
-                                                    <CardContent className="p-5 pb-3">
-                                                        <div className="hidden group-hover:flex gap-2 absolute top-5 right-5 z-10">
-                                                            <button className="hover:bg-gray-200 rounded-md p-1 transition-colors"
-                                                                onClick={(e) => { e.stopPropagation(); handleLike(qa.id) }}>
-                                                                <img src={qa.liked ? "/likeIcon.png" : "/normalLikeIcon.png"} alt="like" className="h-6 w-6" />
-                                                            </button>
-                                                            <button className="hover:bg-gray-200 rounded-md p-1 transition-colors"
-                                                                onClick={(e) => { e.stopPropagation(); handleCurious(qa.id) }}>
-                                                                <img src={qa.curious ? "/wonderIcon.png" : "/normalWonderIcon.png"} alt="curious" className="h-6 w-6" />
-                                                            </button>
-                                                            <DropdownMenu>
-                                                                <DropdownMenuTrigger asChild>
-                                                                    <button onClick={(e) => e.stopPropagation()}>
-                                                                        <img src="/othersIcon.png" alt="menu" className="h-6 w-6" />
+                                                    <CardContent className="p-5 pb-3 relative">
+                                                        <div className="absolute top-5 right-5 z-10">
+                                                            <div className="flex overflow-hidden rounded-xl border border-gray-300 bg-white shadow-sm">
+                                                                <div className="flex">
+                                                                    <button
+                                                                        className="flex items-center justify-center p-2 hover:bg-gray-100"
+                                                                        onClick={(e) => {
+                                                                            e.stopPropagation();
+                                                                            handleLike(qa.id);
+                                                                        }}
+                                                                    >
+                                                                        <img
+                                                                            src={qa.liked ? "/likeIcon.png" : "/normalLikeIcon.png"}
+                                                                            alt="like"
+                                                                            className="h-6 w-6"
+                                                                        />
                                                                     </button>
-                                                                </DropdownMenuTrigger>
-                                                                <DropdownMenuContent
-                                                                    side="right"
-                                                                    sideOffset={8}
-                                                                    align="start"
-                                                                    className="w-28"
-                                                                >
-                                                                    <DropdownMenuItem onClick={handleReport}>신고하기</DropdownMenuItem>
-                                                                    <DropdownMenuItem onClick={() => handleEdit(qa.id)}>수정하기</DropdownMenuItem>
-                                                                </DropdownMenuContent>
-                                                            </DropdownMenu>
 
+                                                                    <button
+                                                                        className="flex items-center justify-center p-2 hover:bg-gray-100"
+                                                                        onClick={(e) => {
+                                                                            e.stopPropagation();
+                                                                            handleCurious(qa.id);
+                                                                        }}
+                                                                    >
+                                                                        <img
+                                                                            src={qa.curious ? "/wonderIcon.png" : "/normalWonderIcon.png"}
+                                                                            alt="curious"
+                                                                            className="h-6 w-6"
+                                                                        />
+                                                                    </button>
+                                                                    <button className="flex items-center justify-center p-2 hover:bg-gray-100">
+                                                                        답변 완료
+                                                                    </button>
+                                                                </div>
+
+                                                                <DropdownMenu>
+                                                                    <DropdownMenuTrigger asChild>
+                                                                        <button
+                                                                            className="flex items-center justify-center p-2 hover:bg-gray-100 border-l border-gray-300"
+                                                                            onClick={(e) => e.stopPropagation()}
+                                                                        >
+                                                                            <img src="/othersIcon.png" alt="menu" className="h-6 w-6" />
+                                                                        </button>
+                                                                    </DropdownMenuTrigger>
+                                                                    <DropdownMenuContent
+                                                                        side="bottom"
+                                                                        align="end"
+                                                                        className="w-28"
+                                                                    >
+                                                                        <DropdownMenuItem onClick={() => handleReport()}>
+                                                                            신고하기
+                                                                        </DropdownMenuItem>
+                                                                        <DropdownMenuItem onClick={() => handleEdit(qa.id)}>
+                                                                            수정하기
+                                                                        </DropdownMenuItem>
+                                                                    </DropdownMenuContent>
+                                                                </DropdownMenu>
+                                                            </div>
                                                         </div>
-
                                                         <p className="text-gray-900 whitespace-pre-line text-base leading-relaxed">{qa.question}</p>
                                                         <span className="text-sm text-gray-500 mt-2 block">{qa.timestamp}</span>
                                                     </CardContent>
                                                 </Card>
+
 
                                                 <div className="mt-2 flex gap-2">
                                                     <div className="flex items-center gap-1 px-2 py-1 rounded-md bg-white border border-gray-200 text-sm">
