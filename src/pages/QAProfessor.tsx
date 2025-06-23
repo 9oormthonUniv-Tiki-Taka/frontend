@@ -88,7 +88,7 @@ export function QAProfessor() {
                                     if (selectedQuestionIds.length > 0) setReplyModalOpen(true);
                                 }}
                                 disabled={selectedQuestionIds.length === 0}
-                                className="hover:text-gray-800 disabled:text-[#191A1C] hover:underline"
+                                className="hover:text-gray-800 disabled:text-[#191A1C] hover:underline hover:decoration-[#646B72] underline-offset-4"
                             >
                                 일괄 응답
                             </button>
@@ -97,7 +97,7 @@ export function QAProfessor() {
                                     if (selectedQuestionIds.length > 0) setReportModalOpen(true);
                                 }}
                                 disabled={selectedQuestionIds.length === 0}
-                                className="hover:text-gray-800 disabled:text-[#191A1C] disabled:cursor-not-allowed hover:underline"
+                                className="hover:text-gray-800 disabled:text-[#191A1C] disabled:cursor-not-allowed hover:underline hover:decoration-[#646B72] underline-offset-4"
                             >
                                 질문 신고
                             </button>
