@@ -48,6 +48,7 @@ export function QAProfessor() {
     const [replyModalOpen, setReplyModalOpen] = useState(false);
     const [reportModalOpen, setReportModalOpen] = useState(false)
     const [selectedQuestionIds, setSelectedQuestionIds] = useState<number[]>([]);
+    const [fabHover, setFabHover] = useState(false);
 
     const handleCheckboxChange = (questionId: number) => {
         setSelectedQuestionIds((prev) =>
@@ -173,8 +174,26 @@ export function QAProfessor() {
             <ReplyGuide open={replyModalOpen} onClose={() => setReplyModalOpen(false)} questionContents={selectedQuestionContents} onSubmit={handleReplySubmit} />
             <ReportGuide open={reportModalOpen} onClose={() => setReportModalOpen(false)} />
 
-            <button className="fixed top-1/2 -translate-y-1/2 right-10 bg-blue-500 text-white rounded-full p-4 shadow-lg">
-                <img src="/FABlogo.png" alt="New Question" className="w-6 h-6" />
+            <button
+                className={`fixed top-1/2 -translate-y-1/2 right-10 flex items-center shadow-lg transition-all duration-300
+                    ${fabHover ? 'bg-blue-500 px-6 rounded-full w-56' : 'bg-blue-500 p-4 rounded-full w-14'}
+                `}
+                onMouseEnter={() => setFabHover(true)}
+                onMouseLeave={() => setFabHover(false)}
+                style={{ minHeight: 56 }}
+            >
+                <img
+                    src="/FABlogo.png"
+                    alt="New Question"
+                    className="w-6 h-6"
+                    style={{ minWidth: 24, minHeight: 24 }}
+                />
+                <span
+                    className={`ml-3 text-white font-semibold whitespace-nowrap transition-opacity duration-200 ${fabHover ? 'opacity-100' : 'opacity-0'}`}
+                    style={{ pointerEvents: fabHover ? 'auto' : 'none' }}
+                >
+                    실시간 참여하기
+                </span>
             </button>
 
             <Footer />

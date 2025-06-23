@@ -127,6 +127,7 @@ const QuestionItem = ({ question, isOpen, onToggle }: { question: Question, isOp
 export function QAStudent() {
   const [activeTab, setActiveTab] = useState("latest");
   const [openQuestionId, setOpenQuestionId] = useState<number | null>(1);
+  const [fabHover, setFabHover] = useState(false);
 
   const questions: Question[] = [
     { id: 1, content: "질문내용 질문내용 질문내용 질문내용 질문내용 질문내용...", date: "2025.00.00" },
@@ -201,8 +202,26 @@ export function QAStudent() {
         </div>
       </div>
 
-        <button className="fixed top-1/2 -translate-y-1/2 right-10 bg-blue-500 text-white rounded-full p-4 shadow-lg">
-            <img src="/FABlogo.png" alt="New Question" className="w-6 h-6" />
+        <button
+          className={`fixed top-1/2 -translate-y-1/2 right-10 flex items-center shadow-lg transition-all duration-300
+            ${fabHover ? 'bg-blue-500 px-6 rounded-full w-56' : 'bg-blue-500 p-4 rounded-full w-14'}
+          `}
+          onMouseEnter={() => setFabHover(true)}
+          onMouseLeave={() => setFabHover(false)}
+          style={{ minHeight: 56 }}
+        >
+          <img
+            src="/FABlogo.png"
+            alt="New Question"
+            className="w-6 h-6"
+            style={{ minWidth: 24, minHeight: 24 }}
+          />
+          <span
+            className={`ml-3 text-white font-semibold whitespace-nowrap transition-opacity duration-200 ${fabHover ? 'opacity-100' : 'opacity-0'}`}
+            style={{ pointerEvents: fabHover ? 'auto' : 'none' }}
+          >
+            실시간 참여하기
+          </span>
         </button>
       <Footer />
     </div>
