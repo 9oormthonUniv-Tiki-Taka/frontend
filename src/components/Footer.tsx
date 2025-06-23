@@ -1,24 +1,21 @@
 export default function Footer() {
-    return (
-        <footer className="bg-gray-200 py-10 mt-auto w-full">
-            <div className="max-w-6xl mx-auto px-6">
-                <div className="flex justify-center space-x-12 text-base text-gray-600 mb-6">
-                    <a href="#" className="hover:text-gray-800">
-                        이용약관
-                    </a>
-                    <a href="#" className="hover:text-gray-800">
-                        운영정책
-                    </a>
-                    <a href="#" className="hover:text-gray-800">
-                        개인정보처리방침
-                    </a>
-                    <a href="#" className="hover:text-gray-800">
-                        문의하기
-                    </a>
-                </div>
-                <div className="text-center text-sm text-gray-500">© 2025 Dankook University made by 컴퓨터과</div>
-            </div>
-        </footer>
-    )
-}
+  return (
+    <footer className="bg-[#F2F6F9] mt-16">
+      <div className="container mx-auto px-8 py-6 text-sm flex flex-col gap-4">
+        <div>
+          <img src="/logo.png" alt="Logo" className="h-6 w-auto" />
+        </div>
 
+        <div className="flex justify-between items-center flex-wrap gap-y-2">
+          <span className="text-[#191A1C]">© 2025 티키타카</span>
+          <div className="flex gap-6 text-[#191A1C] flex-wrap">
+            <a href="#" className="!text-[#191A1C] hover:!text-[#191A1C]">이용안내</a>
+            <a href="#" className="!text-[#191A1C] hover:!text-[#191A1C]">문의하기</a>
+            <a href="#" className="!text-[#191A1C] hover:!text-[#191A1C]">개인정보처리방침</a>
+            <a href="#" className="!text-[#191A1C] hover:!text-[#191A1C]">관리자</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
