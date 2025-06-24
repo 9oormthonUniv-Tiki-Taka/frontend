@@ -9,7 +9,7 @@ import Footer from "@/components/Footer"
 
 type QuestionStatus = "전체" | "미응답" | "응답 완료";
 
-const questions = [
+const initialQuestions = [
     {
         id: 1,
         content: "질문 내용: 질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용...",
@@ -36,17 +36,19 @@ const questions = [
     },
     {
         id: 5,
-        content: "질문 내용: 질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용...",
+        content: "질문 내용: 질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용...",
         date: "2025.00.00",
         status: "응답 완료",
     },
 ];
 
 export function QAProfessor() {
+    const [questions, setQuestions] = useState(initialQuestions);
     const [filter, setFilter] = useState<QuestionStatus>("전체");
     const [replyModalOpen, setReplyModalOpen] = useState(false);
     const [reportModalOpen, setReportModalOpen] = useState(false)
     const [selectedQuestionIds, setSelectedQuestionIds] = useState<number[]>([]);
+    const [fabHover, setFabHover] = useState(false);
 
     const handleCheckboxChange = (questionId: number) => {
         setSelectedQuestionIds((prev) =>
@@ -56,10 +58,25 @@ export function QAProfessor() {
         );
     };
 
+    const handleReplySubmit = (replyText: string) => {
+        console.log("Submitted reply:", replyText);
+        setQuestions(prevQuestions =>
+            prevQuestions.map(q =>
+                selectedQuestionIds.includes(q.id) ? { ...q, status: "응답 완료" } : q
+            )
+        );
+        setSelectedQuestionIds([]);
+        setReplyModalOpen(false);
+    };
+
     const filteredQuestions =
         filter === "전체"
             ? questions
             : questions.filter((q) => q.status === filter);
+
+    const selectedQuestionContents = questions
+        .filter(q => selectedQuestionIds.includes(q.id))
+        .map(q => q.content);
 
     return (
         <div className="absolute top-0 left-0 w-full min-h-screen flex flex-col bg-[#F2F6F9]">
@@ -88,7 +105,7 @@ export function QAProfessor() {
                                     if (selectedQuestionIds.length > 0) setReplyModalOpen(true);
                                 }}
                                 disabled={selectedQuestionIds.length === 0}
-                                className="hover:text-gray-800 disabled:text-gray-400"
+                                className="hover:text-gray-800 disabled:text-[#191A1C] hover:underline hover:decoration-[#646B72] underline-offset-4"
                             >
                                 일괄 응답
                             </button>
@@ -97,7 +114,7 @@ export function QAProfessor() {
                                     if (selectedQuestionIds.length > 0) setReportModalOpen(true);
                                 }}
                                 disabled={selectedQuestionIds.length === 0}
-                                className="hover:text-gray-800 disabled:text-gray-400 disabled:cursor-not-allowed"
+                                className="hover:text-gray-800 disabled:text-[#191A1C] disabled:cursor-not-allowed hover:underline hover:decoration-[#646B72] underline-offset-4"
                             >
                                 질문 신고
                             </button>
@@ -112,9 +129,9 @@ export function QAProfessor() {
                                 onClick={() => setFilter(f)}
                                 className={`
                                     ${filter === f
-                                        ? "bg-[#3B6CFF] text-white"
-                                        : "bg-white text-gray-700 border-gray-300"}
-                                    rounded-full px-5 py-2 text-sm font-semibold
+                                        ? "bg-[#3B6CFF] text-white hover:bg-[#E9EEF2] hover:text-black border border-transparent"
+                                        : "bg-transparent text-gray-700 border-gray-300"}
+                                    rounded-lg px-5 py-2 text-sm font-semibold
                                 `}
                             >
                                 {f}
@@ -124,7 +141,7 @@ export function QAProfessor() {
 
                     <div className="space-y-4">
                         {filteredQuestions.map((q) => (
-                            <div key={q.id} className="bg-white border border-gray-200 rounded-lg p-4 flex items-center justify-between">
+                            <div key={q.id} className="bg-white border border-gray-200 rounded-lg py-6 px-4 flex items-center justify-between">
                                 <div className="flex items-center gap-4">
                                     <Checkbox 
                                         id={`q-${q.id}`}
@@ -135,7 +152,7 @@ export function QAProfessor() {
                                 </div>
                                 <div className="flex items-center gap-6">
                                     <span className="text-sm text-gray-500">{q.date}</span>
-                                    <span className={`px-3 py-1 text-xs font-semibold rounded-full ${q.status === '응답 완료' ? 'bg-blue-100 text-blue-800' : 'bg-gray-200 text-gray-800'}`}>
+                                    <span className={`w-20 text-center py-1 text-xs font-semibold rounded-lg text-white ${q.status === '응답 완료' ? 'bg-[#5D89FF]' : 'bg-[#828C95]'}`}>
                                         {q.status}
                                     </span>
                                     <button>
@@ -154,11 +171,29 @@ export function QAProfessor() {
                 </div>
             </div>
 
-            <ReplyGuide open={replyModalOpen} onClose={() => setReplyModalOpen(false)} />
+            <ReplyGuide open={replyModalOpen} onClose={() => setReplyModalOpen(false)} questionContents={selectedQuestionContents} onSubmit={handleReplySubmit} />
             <ReportGuide open={reportModalOpen} onClose={() => setReportModalOpen(false)} />
 
-            <button className="fixed top-1/2 -translate-y-1/2 right-10 bg-blue-500 text-white rounded-full p-4 shadow-lg">
-                <img src="/FABlogo.png" alt="New Question" className="w-6 h-6" />
+            <button
+                className={`fixed top-1/2 -translate-y-1/2 right-10 flex items-center shadow-lg transition-all duration-300
+                    ${fabHover ? 'bg-blue-500 px-6 rounded-full w-56' : 'bg-blue-500 p-4 rounded-full w-14'}
+                `}
+                onMouseEnter={() => setFabHover(true)}
+                onMouseLeave={() => setFabHover(false)}
+                style={{ minHeight: 56 }}
+            >
+                <img
+                    src="/FABlogo.png"
+                    alt="New Question"
+                    className="w-6 h-6"
+                    style={{ minWidth: 24, minHeight: 24 }}
+                />
+                <span
+                    className={`ml-3 text-white font-semibold whitespace-nowrap transition-opacity duration-200 ${fabHover ? 'opacity-100' : 'opacity-0'}`}
+                    style={{ pointerEvents: fabHover ? 'auto' : 'none' }}
+                >
+                    실시간 참여하기
+                </span>
             </button>
 
             <Footer />
