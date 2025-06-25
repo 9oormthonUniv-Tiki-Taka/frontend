@@ -58,7 +58,6 @@ export default function LiveProfessor() {
     const handleSendAnswer = () => {
         if (!answerInput.trim() || !selectedQuestionId) return
 
-        // WebSocket을 통해 답변 전송
         const ws = new WebSocket(`wss://${window.location.host}/api/lectures/${lectureId}/live`);
         ws.onopen = () => {
             ws.send(JSON.stringify({

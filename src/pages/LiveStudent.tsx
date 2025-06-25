@@ -108,7 +108,6 @@ export default function LiveStudent() {
                 prev.map((qa) => (qa.id === selectedQuestionId ? { ...qa, question: answerInput } : qa))
             )
         } else {
-            // WebSocket을 통해 질문 전송
             const ws = new WebSocket(`wss://${window.location.host}/api/lectures/${lectureId}/live`);
             ws.onopen = () => {
                 ws.send(JSON.stringify({
