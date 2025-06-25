@@ -3,7 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header"
-import { ChevronDown, Send } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
+import { Send } from 'lucide-react';
 
 interface Question {
   id: number;
@@ -11,16 +12,10 @@ interface Question {
   date: string;
 }
 
-interface Comment {
-  author: string;
-  time: string;
-  text: string;
-}
-
 const QuestionItem = ({ question, isOpen, onToggle }: { question: Question, isOpen: boolean, onToggle: () => void }) => {
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(1);
-  const [comments, setComments] = useState<Comment[]>([
+  const [comments, setComments] = useState([
     { author: '티키 01', time: '2024.00.00 오전 00:00', text: '댓글 내용' },
     { author: '티키 01', time: '2024.00.00 오전 00:00', text: '댓글 내용' },
   ]);
@@ -34,7 +29,6 @@ const QuestionItem = ({ question, isOpen, onToggle }: { question: Question, isOp
   const handleCommentSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (newComment.trim() === "") return;
-
     setComments([
       ...comments,
       { author: '나 (학생)', time: '2024.07.16 오후 03:30', text: newComment }
@@ -45,9 +39,9 @@ const QuestionItem = ({ question, isOpen, onToggle }: { question: Question, isOp
   const userHasCommented = comments.some(comment => comment.author === '나 (학생)');
 
   return (
-    <div className="bg-white rounded-lg shadow-sm">
+    <div className="bg-white rounded-lg">
       <div
-        className="flex justify-between items-center p-4 cursor-pointer"
+        className="flex justify-between items-center p-6 gap-4 cursor-pointer border-b border-b-[#DEE4E9]"
         onClick={onToggle}
       >
         <div className="flex-grow">
@@ -64,58 +58,60 @@ const QuestionItem = ({ question, isOpen, onToggle }: { question: Question, isOp
         </div>
       </div>
       {isOpen && (
-        <div className="p-4 bg-gray-50">
-          <button className="text-xs text-gray-500 float-right">질문 신고</button>
-          <div className="mt-4">
-              <p className="font-semibold">티키 01</p>
-              <p className="text-xs text-gray-500">2024.00.00 오전 00:00</p>
-          </div>
-          
-          <div className="mt-4 p-4 bg-[#F5F9FC] rounded-md">
-            <p className="text-s text-[#646B72]">티키 (교수님)</p>
-            <p className="text-xs text-[#C8CFD6]">2024.00.00 오전 00:00</p>
-            <p className="mt-2">교수님 답변 교수님 답변 교수님 답변 교수님 답변 교수님 답변</p>
-            <div className="flex items-center mt-4 text-gray-500">
-                <div className="flex items-center">
-                    <img
-                        src={userHasCommented ? '/messageCircleDots.png' : '/normalMessageCircleDots.png'}
-                        alt="Comments"
-                        className="w-4 h-4 mr-1"
-                    />
-                    {comments.length}
-                </div>
-                <button onClick={handleLikeClick} className="flex items-center ml-4 focus:outline-none">
-                    <img 
-                        src={isLiked ? '/likeIcon.png' : '/normalLikeIcon.png'}
-                        alt="Like"
-                        className="w-4 h-4 mr-1"
-                    />
-                    {likeCount}
-                </button>
+        <div className="bg-white px-8 py-8 mt-4 rounded-lg">
+          <div className="flex justify-between items-center mb-2">
+            <div>
+              <div className="font-semibold text-[#646B72]">티키 01</div>
+              <div className="text-xs text-[#C8CFD6]">2025.00.00 오전 00:00</div>
             </div>
+            <button className="text-[#646B72] text-sm font-semibold">질문 신고</button>
           </div>
-
+          <div className="text-[#191A1C] font-semibold mb-2">질문 내용</div>
+          <div className="text-[#646B72] mb-4">{question.content}</div>
+          <div className="bg-[#F5F9FC] rounded-xl p-6 mb-4">
+            <div className="font-semibold text-[#646B72]">타카 (교수님)</div>
+            <div className="text-xs text-[#C8CFD6]">2025.00.00 오전 00:00</div>
+            <div className="mt-2 text-[#191A1C]">교수님 답변 교수님 답변 교수님 답변 교수님 답변 교수님 답변</div>
+          </div>
+          <div className="flex items-center mt-4 text-gray-500 border-b border-b-[#DEE4E9] pb-6">
+            <div className="flex items-center">
+              <img
+                src={userHasCommented ? '/messageCircleDots.png' : '/normalMessageCircleDots.png'}
+                alt="Comments"
+                className="w-4 h-4 mr-1"
+              />
+              {comments.length}
+            </div>
+            <button onClick={handleLikeClick} className="flex items-center ml-4 focus:outline-none">
+              <img 
+                src={isLiked ? '/likeIcon.png' : '/normalLikeIcon.png'}
+                alt="Like"
+                className="w-4 h-4 mr-1"
+              />
+              {likeCount}
+            </button>
+          </div>
           <div className="mt-4 space-y-4">
-              {comments.map((comment, index) => (
-                <div key={index} className="p-4 bg-white rounded-md">
-                    <p className="font-semibold">{comment.author}</p>
-                    <p className="text-xs text-gray-500">{comment.time}</p>
-                    <p className="mt-2">{comment.text}</p>
-                </div>
-              ))}
+            {comments.map((comment, index) => (
+              <div key={index} className="p-4 bg-white border-b border-b-[#DEE4E9] pb-6">
+                <p className="font-semibold">{comment.author}</p>
+                <p className="text-xs text-gray-500">{comment.time}</p>
+                <p className="mt-2">{comment.text}</p>
+              </div>
+            ))}
           </div>
-
-          <form onSubmit={handleCommentSubmit} className="mt-4 flex">
-            <Input 
-              type="text" 
-              placeholder="댓글을 입력하세요." 
-              className="flex-grow bg-[#F5F9FC]"
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-            />
-            <Button variant="ghost" size="icon" type="submit">
-              <Send />
-            </Button>
+          <form onSubmit={handleCommentSubmit} className="mt-12 flex relative">
+            <div className="relative w-full">
+              <textarea
+                placeholder="댓글을 입력하세요."
+                className="flex-grow bg-[#F5F9FC] h-[100px] border-none pt-4 pr-12 pl-4 placeholder:text-[#B1BAC1] placeholder:text-sm placeholder:align-top resize-none rounded-xl w-full focus:outline-none"
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+              />
+              <Button variant="ghost" size="icon" type="submit" className="absolute right-4 top-1/4 -translate-y-1/4">
+                <Send />
+              </Button>
+            </div>
           </form>
         </div>
       )}

@@ -157,8 +157,8 @@ export function QAProfessor() {
                         {filteredQuestions.map((q) => {
                             const isOpen = openQuestionId === q.id;
                             return (
-                                <div key={q.id} className={`bg-white border rounded-lg ${isOpen ? 'border-[#646B72]' : 'border-gray-200'}`}>
-                                    <div className="py-6 px-6 flex items-center justify-between">
+                                <div key={q.id} className={`bg-white rounded-lg ${isOpen ? 'border-[#646B72]' : 'border-gray-200'}`}>
+                                    <div className={`flex justify-between items-center p-6 gap-4 cursor-pointer border-b border-b-[#DEE4E9]`}>
                                         <div className="flex items-center gap-4">
                                             <Checkbox 
                                                 id={`q-${q.id}`}
@@ -177,7 +177,7 @@ export function QAProfessor() {
                                         </div>
                                     </div>
                                     {isOpen && (
-                                        <div className="bg-white border bb-[#646B72] rounded-lg px-8 py-8 mt-4">
+                                        <div className="bg-white rounded-lg px-8 py-8 mt-4">
                                             <div className="text-[#646B72] mb-12 ml-4 text-sm font-semibold">내용: <span className="font-normal text-[#646B72]">{q.content}</span></div>
                                             <div className="w-full h-px my-4 bg-[#C8CFD6]" />
                                             {(answerEditIndex !== null) ? (
@@ -213,7 +213,7 @@ export function QAProfessor() {
                                                                     <div className="font-semibold text-[#646B72]">티키 (교수님)</div>
                                                                     <div className="text-xs text-[#C8CFD6]">2025.00.00 오전 00:00</div>
                                                                 </div>
-                                                                <button className="text-[#646B72] text-sm font-semibold" onClick={() => {
+                                                                <button className="text-[#646B72] text-sm font-semibold hover:underline hover:decoration-[#646B72] underline-offset-4" onClick={() => {
                                                                     setAnswerInput(ans);
                                                                     setAnswerEditIndex(idx);
                                                                 }}>수정하기</button>
