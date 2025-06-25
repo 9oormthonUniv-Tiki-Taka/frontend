@@ -47,6 +47,22 @@ app.post('/api/save-subscription', (req, res) => {
   res.status(201).json({ message: '구독 완료!' });
 });
 
+app.get('/test-push', (req, res) => {
+  if (subs.length === 0) {
+    return res.status(400).json({ error: '구독자가 없습니다.' });
+  }
+
+  webpush.sendNotification(subs[0], JSON.stringify({
+    title: '테스트 알림',
+    body: '서버에서 보낸 테스트 메시지입니다.',
+    url: '/LiveProfessor'
+  }), {
+    TTL: 1000 * 60 * 60 * 12
+  });
+
+  res.json({ message: '테스트 알림 전송 완료!' });
+});
+
 // 소켓 연결 및 채팅 메시지 감지
 io.on('connection', (socket) => {
   console.log('소켓 연결됨:', socket.id);
