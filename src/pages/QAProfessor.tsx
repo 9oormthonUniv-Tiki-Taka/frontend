@@ -245,7 +245,7 @@ export function QAProfessor() {
                     </div>
                     
                     <div className="text-center mt-8">
-                        <Button variant="outline" className="border-gray-300 text-gray-700">
+                        <Button variant="outline" className="border-gray-300 text-gray-700 bg-[#F2F6F9]">
                             더보기 <ChevronDown className="w-4 h-4 ml-1" />
                         </Button>
                     </div>
