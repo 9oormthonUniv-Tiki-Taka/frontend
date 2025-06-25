@@ -16,14 +16,17 @@ const reasons = [
 interface ReportModalProps {
   open: boolean
   onClose: () => void
+  onSubmit?: () => void
+  questionContent?: string
 }
 
-export default function ReportGuide({ open, onClose }: ReportModalProps) {
+export default function ReportGuide({ open, onClose, onSubmit, questionContent }: ReportModalProps) {
   const [selectedReason, setSelectedReason] = useState<string | null>(null)
 
   const handleSubmit = () => {
     if (!selectedReason) return
     console.log("신고 사유:", selectedReason)
+    if (onSubmit) onSubmit();
     onClose()
   }
 
@@ -42,7 +45,7 @@ export default function ReportGuide({ open, onClose }: ReportModalProps) {
         </DialogHeader>
         <div className="flex items-center gap-2 text-sm">
           <span className="font-semibold text-[#828C95]">내용:</span>
-          <span className="text-[#464B51]">내용내용내용질문내용...</span>
+          <span className="text-[#464B51]">{typeof questionContent === "string" ? questionContent : ""}</span>
         </div>
 
         <div className="w-full h-px my-2 bg-[#C8CFD6]" />
