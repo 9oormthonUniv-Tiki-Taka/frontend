@@ -1,8 +1,13 @@
 import { useState, useEffect } from "react";
+import StudentIdAuth from "../components/StudentIdAuth";
+import { Dialog, DialogContent } from "../components/ui/dialog";
+import { CircleCheck, XCircle } from "lucide-react";
 
 export function MainLogin() {
     const [email, setEmail] = useState("");
-    const [status, setStatus] = useState<"default" | "loading" | "success">("default");
+    const [status, setStatus] = useState<"default" | "loading" | "success" | "error">("default");
+    const [showAuthModal, setShowAuthModal] = useState(false);
+    const isFirstUser = true; // 이메일 인증 후 받아올 값 대체
 
     useEffect(() => {
         if (email.length > 0 && status !== "success") {
@@ -21,7 +26,20 @@ export function MainLogin() {
         setStatus("loading");
         setTimeout(() => {
             setStatus("success");
+            if (isFirstUser) setShowAuthModal(true);
         }, 1500);
+    };
+
+    const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+            handleSubmit();
+        }
+    };
+
+    // StudentIdAuth에서 인증 결과를 받아 처리
+    const handleAuthResult = (result: "success" | "error") => {
+        setShowAuthModal(false);
+        setStatus(result);
     };
 
     return (
@@ -54,6 +72,7 @@ export function MainLogin() {
                             placeholder="단국대학교 이메일 인증"
                             value={email}
                             onChange={handleInputChange}
+                            onKeyDown={handleInputKeyDown}
                             className={`w-full h-[70px] pl-10 pr-12 text-[#191A1C] bg-white placeholder-[#C8CFD6] text-base rounded-[18px] border focus:outline-none 
                                 ${email ? "border-[#3B6CFF] ring-1 ring-[#3B6CFF]" : "border-[#A5C7FF]"}
                             `}
@@ -76,12 +95,24 @@ export function MainLogin() {
                     <div className="min-h-[24px] mt-2 text-center" >
                         {status === "success" && (
                             <p className="flex items-center justify-center gap-1 text-[#3B6CFF] text-sm">
+                                <CircleCheck className="w-4 h-4" color="#3B6CFF" />
                                 인증이 완료되었어요. 이제 티키타카를 시작해보세요!
+                            </p>
+                        )}
+                        {status === "error" && (
+                            <p className="flex items-center justify-center gap-1 text-[#FF4D4F] text-sm">
+                                <XCircle className="w-4 h-4" color="#FF4D4F" />
+                                인증에 실패했어요. 이메일 주소를 확인하고 다시 시도해주세요.
                             </p>
                         )}
                     </div>
                 </main>
             </div>
+            <Dialog open={showAuthModal} onOpenChange={setShowAuthModal}>
+                <DialogContent className="p-0 bg-transparent border-none shadow-none max-w-md">
+                    <StudentIdAuth onAuthResult={handleAuthResult} />
+                </DialogContent>
+            </Dialog>
         </div>
     )
 }
