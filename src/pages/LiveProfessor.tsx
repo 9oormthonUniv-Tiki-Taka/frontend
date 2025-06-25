@@ -39,16 +39,23 @@ export default function LiveProfessor() {
     const [answerInput, setAnswerInput] = useState("")
     const [selectedQuestionId, setSelectedQuestionId] = useState<string | null>(null)
     const [reportModalOpen, setReportModalOpen] = useState(false)
+    const [flagTargetId, setFlagTargetId] = useState<string | null>(null)
 
     useEffect(() => {
-        fetch(`/api/lectures/${lectureId}/live/questions`)
-            .then(res => res.json())
-            .then(data => {
+        const fetchQuestions = async () => {
+            try {
+                const res = await fetch(`http://localhost:3001/api/lectures/${lectureId}/live/questions`);
+                const data = await res.json();
+                console.log("질문 데이터:", data);
                 if (Array.isArray(data.questions)) {
-                    setQAs(data.questions.map(mapApiToQAItem))
+                    console.log("질문 개수:", data.questions.length, data.questions);
+                    setQAs(data.questions.map(mapApiToQAItem));
                 }
-            })
-            .catch(() => setQAs([]))
+            } catch {
+                setQAs([]);
+            }
+        };
+        fetchQuestions();
     }, [])
 
     const handleSelectQuestion = (id: string) => {
@@ -79,10 +86,18 @@ export default function LiveProfessor() {
     }
 
     const handleToggleFlag = (id: string) => {
-        setQAs((prev) =>
-            prev.map((qa) => (qa.id === id ? { ...qa, flaged: !qa.flaged } : qa))
-        )
-        setReportModalOpen(true)
+        setFlagTargetId(id);
+        setReportModalOpen(true);
+    }
+
+    const handleReportSubmit = () => {
+        if (flagTargetId) {
+            setQAs((prev) =>
+                prev.map((qa) => (qa.id === flagTargetId ? { ...qa, flaged: true } : qa))
+            );
+        }
+        setReportModalOpen(false);
+        setFlagTargetId(null);
     }
 
     return (
@@ -168,7 +183,16 @@ export default function LiveProfessor() {
                 )}
                 </div>
             </main>
-            <ReportGuide open={reportModalOpen} onClose={() => setReportModalOpen(false)} />
+            <ReportGuide
+                open={reportModalOpen}
+                onClose={() => setReportModalOpen(false)}
+                onSubmit={handleReportSubmit}
+                questionContent={
+                    flagTargetId
+                        ? qas.find((qa) => qa.id === flagTargetId)?.question ?? ""
+                        : ""
+                }
+            />
 
             {selectedQuestionId && (
                 <div className="sticky bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-6 px-8">
