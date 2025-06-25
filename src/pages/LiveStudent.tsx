@@ -46,14 +46,20 @@ export default function LiveStudent() {
     const [reportModalOpen, setReportModalOpen] = useState(false)
 
     useEffect(() => {
-        fetch(`/api/lectures/${lectureId}/live/questions`)
-            .then(res => res.json())
-            .then(data => {
+        const fetchQuestions = async () => {
+            try {
+                const res = await fetch(`http://localhost:3001/api/lectures/1/live/questions`);
+                const data = await res.json();
+                console.log("질문 데이터:", data);
                 if (Array.isArray(data.questions)) {
-                    setQAs(data.questions.map(mapApiToQAItem))
+                    console.log("질문 개수:", data.questions.length, data.questions);
+                    setQAs(data.questions.map(mapApiToQAItem));
                 }
-            })
-            .catch(() => setQAs([]))
+            } catch {
+                setQAs([]);
+            }
+        };
+        fetchQuestions();
     }, [])
 
     const handleSelectQuestion = (id: string) => {
@@ -137,7 +143,7 @@ export default function LiveStudent() {
                         <div className="px-8">
                             <div className="space-y-8">
                                 {qas.map((qa) => (
-                                    <div key={qa.id} className="space-y-4">
+                                    <div key={qa.id + qa.question} className="space-y-4">
                                         <div className="flex gap-4">
                                             <Avatar className="h-12 w-12 bg-gray-300 flex-shrink-0">
                                                 <AvatarFallback className="text-base font-medium">{qa.user.slice(-2)}</AvatarFallback>
