@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -21,60 +21,43 @@ interface QAItem {
     flaged?: boolean
 }
 
-const sampleQAs: QAItem[] = [
-    {
-        id: "1",
-        user: "티키 01",
-        timestamp: "2025.00.00 오전 00:00",
-        question: "안녕하세요 교수님!\n방금 설명에서 예시로 나온 책 제목을 잘 번 더 말씀해 주실 수 있을까요?",
-        answer: "교수님내용...",
-        likeCount: 2,
-        curiousCount: 4,
+const lectureId = "1"
+
+function mapApiToQAItem(api: any): QAItem {
+    return {
+        id: api.id,
+        user: api.user?.nickname ?? "익명",
+        timestamp: api.created_at ?? "",
+        question: api.content ?? "",
+        answer: api.answer?.content ?? undefined,
+        likeCount: api.likes ?? 0,
+        curiousCount: api.wonder ?? 0,
         liked: false,
         curious: false,
-        awarded: false,
+        awarded: api.medal ? true : false,
         flaged: false,
-    },
-    {
-        id: "2",
-        user: "티키 01",
-        timestamp: "2025.00.00 오전 00:00",
-        question: "책 제목 다시 말씀해 주세요!",
-        likeCount: 0,
-        curiousCount: 4,
-        liked: false,
-        curious: false,
-        awarded: false,
-        flaged: false,
-    },
-    {
-        id: "3",
-        user: "티키 01",
-        timestamp: "2025.00.00 오전 00:00",
-        question: "수업 내용 중 예시 다시 설명해 주세요!",
-        likeCount: 0,
-        curiousCount: 4,
-        liked: false,
-        curious: false,
-        awarded: false,
-        flaged: false,
-    },
-]
+    }
+}
 
 export default function LiveStudent() {
     const [qas, setQAs] = useState<QAItem[]>([])
-    const [showWithQuestions, setShowWithQuestions] = useState(false)
     const [answerInput, setAnswerInput] = useState("")
     const [selectedQuestionId, setSelectedQuestionId] = useState<string | null>(null)
     const [reportModalOpen, setReportModalOpen] = useState(false)
 
+    useEffect(() => {
+        fetch(`/api/lectures/${lectureId}/live/questions`)
+            .then(res => res.json())
+            .then(data => {
+                if (Array.isArray(data.questions)) {
+                    setQAs(data.questions.map(mapApiToQAItem))
+                }
+            })
+            .catch(() => setQAs([]))
+    }, [])
+
     const handleSelectQuestion = (id: string) => {
         setSelectedQuestionId((prev) => (prev === id ? null : id))
-    }
-
-    const handleToggleView = () => {
-        setShowWithQuestions(!showWithQuestions)
-        setQAs(!showWithQuestions ? sampleQAs : [])
     }
 
     const handleLike = (id: string) => {
@@ -125,19 +108,16 @@ export default function LiveStudent() {
                 prev.map((qa) => (qa.id === selectedQuestionId ? { ...qa, question: answerInput } : qa))
             )
         } else {
-            const newQA: QAItem = {
-                id: Date.now().toString(),
-                user: "티키 00",
-                timestamp: new Date().toLocaleString(),
-                question: answerInput,
-                likeCount: 0,
-                curiousCount: 0,
-                liked: false,
-                curious: false,
-                awarded: false,
-                flaged: false,
-            }
-            setQAs((prev) => [...prev, newQA])
+            const ws = new WebSocket(`wss://${window.location.host}/api/lectures/${lectureId}/live`);
+            ws.onopen = () => {
+                ws.send(JSON.stringify({
+                    type: "question",
+                    request: {
+                        content: answerInput
+                    }
+                }));
+                ws.close();
+            };
         }
 
         setAnswerInput("")
@@ -147,12 +127,6 @@ export default function LiveStudent() {
     return (
         <div className="absolute top-0 left-0 w-full min-h-screen flex flex-col bg-[#F2F6F9]">
             <Header />
-            <div className="w-full px-8 py-6">
-                <Button onClick={handleToggleView} className="mb-4 px-6 py-2 text-base">
-                    {showWithQuestions ? "질문 없는 상태 보기" : "질문 있는 상태 보기"}
-                </Button>
-            </div>
-
             <main className="w-full flex-1 flex justify-center">
                 <div className="w-full max-w-[1000px] px-4">
                     {qas.length === 0 ? (
