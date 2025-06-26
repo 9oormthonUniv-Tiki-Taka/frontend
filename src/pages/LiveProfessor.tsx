@@ -26,7 +26,9 @@ function mapApiToQAItem(api: any): QAItem {
         user: api.user?.nickname ?? "익명",
         timestamp: api.created_at ?? "",
         question: api.content ?? "",
-        answer: api.answer?.content ?? undefined,
+        answer: api.answer && typeof api.answer === "object" && "content" in api.answer && api.answer.content
+            ? api.answer.content
+            : undefined,
         likeCount: api.likes ?? 0,
         curiousCount: api.wonder ?? 0,
         awarded: api.medal ? true : false,
@@ -42,19 +44,6 @@ export default function LiveProfessor() {
     const [flagTargetId, setFlagTargetId] = useState<string | null>(null)
 
     useEffect(() => {
-        const fetchQuestions = async () => {
-            try {
-                const res = await fetch(`http://localhost:3001/api/lectures/${lectureId}/live/questions`);
-                const data = await res.json();
-                console.log("질문 데이터:", data);
-                if (Array.isArray(data.questions)) {
-                    console.log("질문 개수:", data.questions.length, data.questions);
-                    setQAs(data.questions.map(mapApiToQAItem));
-                }
-            } catch {
-                setQAs([]);
-            }
-        };
         fetchQuestions();
     }, [])
 
@@ -62,10 +51,22 @@ export default function LiveProfessor() {
         setSelectedQuestionId((prev) => (prev === id ? null : id))
     }
 
+    const fetchQuestions = async () => {
+        try {
+            const res = await fetch(`http://localhost:3001/api/lectures/${lectureId}/live/questions`);
+            const data = await res.json();
+            if (Array.isArray(data.questions)) {
+                setQAs(data.questions.map(mapApiToQAItem));
+            }
+        } catch {
+            setQAs([]);
+        }
+    };
+
     const handleSendAnswer = () => {
         if (!answerInput.trim() || !selectedQuestionId) return
 
-        const ws = new WebSocket(`wss://${window.location.host}/api/lectures/${lectureId}/live`);
+        const ws = new WebSocket(`ws://localhost:3001/api/lectures/${lectureId}/live`);
         ws.onopen = () => {
             ws.send(JSON.stringify({
                 type: "answer",
@@ -75,6 +76,9 @@ export default function LiveProfessor() {
                 }
             }));
             ws.close();
+        };
+        ws.onclose = () => {
+            fetchQuestions();
         };
 
         setAnswerInput("")
