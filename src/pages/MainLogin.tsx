@@ -3,6 +3,35 @@ import StudentIdAuth from "../components/StudentIdAuth";
 import { Dialog, DialogContent } from "../components/ui/dialog";
 import { CircleCheck, XCircle } from "lucide-react";
 
+const VAPID_PUBLIC_KEY = "BPLBsiS3Q-aqnk1QB9Y5H6ZcOySv0evIVqDXwDLW18Or0sEPFQUYGZfeBTmWAzTUI9xruBM5rvxizshLpp8mxVY";
+
+function urlBase64ToUint8Array(base64String: string) {
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+    const rawData = window.atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+    for (let i = 0; i < rawData.length; ++i) {
+        outputArray[i] = rawData.charCodeAt(i);
+    }
+    return outputArray;
+}
+
+async function subscribeUserToPush() {
+    if ('serviceWorker' in navigator && 'PushManager' in window) {
+        const registration = await navigator.serviceWorker.ready;
+        const subscription = await registration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+        });
+        await fetch('http://localhost:3000/api/save-subscription', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(subscription)
+        });
+        console.log('푸시 구독 완료!');
+    }
+}
+
 export function MainLogin() {
     const [email, setEmail] = useState("");
     const [status, setStatus] = useState<"default" | "loading" | "success" | "error">("default");
@@ -16,6 +45,25 @@ export function MainLogin() {
             setStatus("default");
         }
     }, [email]);
+
+    // 서비스워커 등록 및 푸시 구독
+    useEffect(() => {
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .then(registration => {
+                    console.log('Service Worker 등록 성공:', registration);
+                    // 서비스워커 등록 성공 후 푸시 구독
+                    subscribeUserToPush();
+                    // 알림 권한 요청
+                    if ('Notification' in window && Notification.permission !== 'granted') {
+                        Notification.requestPermission();
+                    }
+                })
+                .catch(error => {
+                    console.log('Service Worker 등록 실패:', error);
+                });
+        }
+    }, []);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setEmail(e.target.value);
@@ -116,5 +164,4 @@ export function MainLogin() {
         </div>
     )
 }
-
 export default MainLogin;
