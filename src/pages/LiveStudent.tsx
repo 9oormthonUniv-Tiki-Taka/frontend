@@ -45,20 +45,21 @@ export default function LiveStudent() {
     const [selectedQuestionId, setSelectedQuestionId] = useState<string | null>(null)
     const [reportModalOpen, setReportModalOpen] = useState(false)
 
-    useEffect(() => {
-        const fetchQuestions = async () => {
-            try {
-                const res = await fetch(`http://localhost:3001/api/lectures/1/live/questions`);
-                const data = await res.json();
-                console.log("질문 데이터:", data);
-                if (Array.isArray(data.questions)) {
-                    console.log("질문 개수:", data.questions.length, data.questions);
-                    setQAs(data.questions.map(mapApiToQAItem));
-                }
-            } catch {
-                setQAs([]);
+    const fetchQuestions = async () => {
+        try {
+            const res = await fetch(`http://localhost:3001/api/lectures/${lectureId}/live/questions`);
+            const data = await res.json();
+            console.log("질문 데이터:", data);
+            if (Array.isArray(data.questions)) {
+                console.log("질문 개수:", data.questions.length, data.questions);
+                setQAs(data.questions.map(mapApiToQAItem));
             }
-        };
+        } catch {
+            setQAs([]);
+        }
+    };
+
+    useEffect(() => {
         fetchQuestions();
     }, [])
 
@@ -77,7 +78,20 @@ export default function LiveStudent() {
                     }
                     : qa
             )
-        )
+        );
+        // 소켓 요청 추가
+        const ws = new WebSocket(`ws://localhost:3001/api/lectures/${lectureId}/live`);
+        ws.onopen = () => {
+            ws.send(JSON.stringify({
+                type: "like",
+                request: {
+                    questionId: id,
+                    type: "",
+                    amount: ""
+                }
+            }));
+            ws.close();
+        };
     }
 
     const handleCurious = (id: string) => {
@@ -91,7 +105,20 @@ export default function LiveStudent() {
                     }
                     : qa
             )
-        )
+        );
+        // 소켓 요청 추가
+        const ws = new WebSocket(`ws://localhost:3001/api/lectures/${lectureId}/live`);
+        ws.onopen = () => {
+            ws.send(JSON.stringify({
+                type: "wonder",
+                request: {
+                    questionId: id,
+                    type: "",
+                    amount: ""
+                }
+            }));
+            ws.close();
+        };
     }
 
     const handleEdit = (id: string) => {
@@ -102,8 +129,11 @@ export default function LiveStudent() {
         }
     }
 
-    const handleReport = () => {
-        setReportModalOpen(true)
+    const [reportTargetId, setReportTargetId] = useState<string | null>(null);
+
+    const handleReport = (id: string) => {
+        setReportTargetId(id);
+        setReportModalOpen(true);
     }
 
     const handleSendAnswer = () => {
@@ -114,7 +144,7 @@ export default function LiveStudent() {
                 prev.map((qa) => (qa.id === selectedQuestionId ? { ...qa, question: answerInput } : qa))
             )
         } else {
-            const ws = new WebSocket(`wss://${window.location.host}/api/lectures/${lectureId}/live`);
+            const ws = new WebSocket(`ws://localhost:3001/api/lectures/${lectureId}/live`);
             ws.onopen = () => {
                 ws.send(JSON.stringify({
                     type: "question",
@@ -123,6 +153,7 @@ export default function LiveStudent() {
                     }
                 }));
                 ws.close();
+                fetchQuestions();
             };
         }
 
@@ -203,7 +234,7 @@ export default function LiveStudent() {
                                                                         align="end"
                                                                         className="w-28"
                                                                     >
-                                                                        <DropdownMenuItem onClick={() => handleReport()}>
+                                                                        <DropdownMenuItem onClick={() => handleReport(qa.id)}>
                                                                             신고하기
                                                                         </DropdownMenuItem>
                                                                         <DropdownMenuItem onClick={() => handleEdit(qa.id)}>
@@ -251,7 +282,15 @@ export default function LiveStudent() {
                 </div>
             </main>
 
-            <ReportGuide open={reportModalOpen} onClose={() => setReportModalOpen(false)} />
+            <ReportGuide
+                open={reportModalOpen}
+                onClose={() => setReportModalOpen(false)}
+                questionContent={
+                    reportTargetId
+                        ? qas.find((qa) => qa.id === reportTargetId)?.question ?? ""
+                        : ""
+                }
+            />
 
             <div className="sticky bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-6 px-8">
                 <div className="flex gap-4">
