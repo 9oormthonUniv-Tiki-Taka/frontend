@@ -1,0 +1,43 @@
+.dot-spinner {
+  position: relative;
+  width: 40px;
+  height: 40px;
+}
+
+.dot-spinner > div {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: #64748b;
+  border-radius: 50%;
+  animation: dot-fade 1.2s linear infinite;
+}
+
+/* 원형 좌표 (중심에서 20px 반지름 기준 45도 간격) */
+.dot-spinner > div:nth-child(1) { top: 0px;   left: 17px; }
+.dot-spinner > div:nth-child(2) { top: 5px;   left: 27px; }
+.dot-spinner > div:nth-child(3) { top: 14px;  left: 34px; }
+.dot-spinner > div:nth-child(4) { top: 25px;  left: 32px; }
+.dot-spinner > div:nth-child(5) { top: 34px;  left: 24px; }
+.dot-spinner > div:nth-child(6) { top: 34px;  left: 12px; }
+.dot-spinner > div:nth-child(7) { top: 24px;  left: 4px; }
+.dot-spinner > div:nth-child(8) { top: 10px;  left: 4px; }
+
+.dot-spinner > div {
+  transform: translate(-50%, -50%);
+}
+
+.dot-spinner > div:nth-child(1) { animation-delay: 0s; }
+.dot-spinner > div:nth-child(2) { animation-delay: 0.15s; }
+.dot-spinner > div:nth-child(3) { animation-delay: 0.3s; }
+.dot-spinner > div:nth-child(4) { animation-delay: 0.45s; }
+.dot-spinner > div:nth-child(5) { animation-delay: 0.6s; }
+.dot-spinner > div:nth-child(6) { animation-delay: 0.75s; }
+.dot-spinner > div:nth-child(7) { animation-delay: 0.9s; }
+.dot-spinner > div:nth-child(8) { animation-delay: 1.05s; }
+
+@keyframes dot-fade {
+  0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 0.3; transform: translate(-50%, -50%) scale(0.6); }
+  100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}

@@ -1,125 +1,160 @@
-import { Bell, Settings, Search, Calendar, ChevronDown } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import Footer from "@/components/Footer"
+import { useState } from "react";
+import { Search, Calendar } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { useNavigate } from "react-router-dom";
 
-export default function ListProfessor() {
+const filters = [
+  { id: 0, label: "최신 등록 순" },
+  { id: 1, label: "질문 많은 순" },
+  { id: 2, label: "이름 순 (가나다)" },
+];
+
+const questions = [
+  { id: 0, label: "질문 많음" },
+  { id: 1, label: "질문 보통" },
+  { id: 2, label: "질문 적음" },
+];
+
+export default function LectureListPage() {
+  const [selectedFilter, setSelectedFilter] = useState(1);
+  const [selectedQuestion, setSelectedQuestion] = useState<number | null>(null);
+
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Header */}
-      <header className="bg-white border-b px-8 py-4 flex items-center justify-between w-full">
-        <div className="flex items-center space-x-4">
-          <div className="w-10 h-10 bg-gray-200 rounded"></div>
-        </div>
-        <div className="flex items-center space-x-6">
-          <Bell className="w-6 h-6 text-gray-600" />
-          <Settings className="w-6 h-6 text-gray-600" />
-          <Button variant="outline" size="sm" className="px-4">
-            로그인
-          </Button>
-        </div>
-      </header>
+    <div className="min-h-screen bg-[#F8FBFF] px-4 sm:px-6 md:px-8 py-8 sm:py-10">
+      {/* 제목 */}
+      <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-center text-[#202325] mb-4">
+        나의 강의 리스트
+      </h1>
+      <p className="text-sm sm:text-base text-center text-[#555] mb-6">
+        담당 중인 강의를 확인하고 질문을 관리해보세요.
+      </p>
 
-      {/* Main Content */}
-      <main className="w-full px-8 py-10 flex-grow">
-        {/* Title Section */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-3">나의 강의 리스트</h1>
-          <p className="text-lg text-gray-600">담당 혹은 강의를 확인하고 질문을 관리해보세요.</p>
-        </div>
+      {/* 검색창 */}
+      <div className="relative w-full max-w-xl mb-14 mx-auto">
+        <Input
+          type="text"
+          placeholder="강의명을 입력하세요..."
+          className="w-full pl-5 pr-12 py-3 bg-[#FFFFFF] sm:py-4 md:py-5 text-sm sm:text-base md:text-lg rounded-full border border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400"
+        />
+        <Search className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-blue-500" />
+      </div>
 
-        {/* Search Bar */}
-        <div className="relative mb-12 max-w-4xl mx-auto">
-          <Input
-            type="text"
-            placeholder="강의명을 입력하세요"
-            className="w-full pl-5 pr-12 py-6 text-lg rounded-full border-gray-300"
-          />
-          <Search className="absolute right-4 top-1/2 transform -translate-y-1/2 w-6 h-6 text-gray-400" />
-        </div>
-
-        {/* Today's Lectures */}
-        <section className="mb-12">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center space-x-3">
-              <Calendar className="w-6 h-6 text-gray-600" />
-              <h2 className="text-xl font-semibold">오늘 강의 (2025.00.00)</h2>
-            </div>
-            <div className="flex items-center space-x-6 text-base">
-              <div className="flex items-center space-x-2">
-                <div className="w-4 h-4 bg-gray-400 rounded-full"></div>
-                <span>질문 대기중</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <div className="w-4 h-4 bg-gray-600 rounded-full"></div>
-                <span>질문 보류</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <div className="w-4 h-4 bg-gray-800 rounded-full"></div>
-                <span>질문 작성</span>
-              </div>
-            </div>
+      {/* 오늘 강의 */}
+      <div className="mb-12">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-0 mb-4">
+          <div className="flex items-center text-[#202325] font-semibold text-sm sm:text-base">
+            <Calendar className="w-5 h-5 mr-1" />
+            오늘 강의 (2025.00.00)
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            <div className="bg-white rounded-lg p-6 shadow-sm border flex items-center justify-between">
-              <span className="text-lg text-gray-700">수업 이름 (강의실 이름)</span>
-              <Button size="sm" className="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2">
-                강의
-              </Button>
-            </div>
-            <div className="bg-white rounded-lg p-6 shadow-sm border flex items-center justify-between">
-              <span className="text-lg text-gray-700">수업 이름 (강의실 이름)</span>
-              <Button size="sm" className="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2">
-                강의
-              </Button>
-            </div>
-          </div>
-        </section>
-
-        {/* All Lectures */}
-        <section>
-          <div className="flex items-center space-x-3 mb-6">
-            <Calendar className="w-6 h-6 text-gray-600" />
-            <h2 className="text-xl font-semibold">전체 강의</h2>
-          </div>
-
-          {/* Filter Tabs */}
-          <div className="flex space-x-3 mb-8">
-            <Button className="bg-gray-700 hover:bg-gray-800 text-white px-6 py-2 text-base">최신 등록 순</Button>
-            <Button variant="outline" className="px-6 py-2 text-base border-gray-300 text-gray-700 hover:bg-gray-50">
-              질문 많은 순
-            </Button>
-            <Button variant="outline" className="px-6 py-2 text-base border-gray-300 text-gray-700 hover:bg-gray-50">
-              이름 순 (가나다)
-            </Button>
-          </div>
-
-          {/* Lecture List */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 mb-10">
-            {Array.from({ length: 10 }).map((_, index) => (
-              <div key={index} className="bg-white rounded-lg p-6 shadow-sm border flex items-center justify-between">
-                <span className="text-lg text-gray-700">수업 이름 (강의실 이름)</span>
-                <Button size="sm" className="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2">
-                  강의
-                </Button>
-              </div>
+          {/* 질문 필터 */}
+          <div className="flex flex-wrap gap-3 text-sm text-[#646B72]">
+            {questions.map((q) => (
+              <button
+                key={q.id}
+                onClick={() => setSelectedQuestion(q.id)}
+                className="flex items-center gap-2 focus:outline-none"
+              >
+                <span
+                  className="w-4 h-4 rounded-[4px]"
+                  style={{
+                    backgroundColor: selectedQuestion === q.id ? "#323639" : "#646B72",
+                  }}
+                />
+                {q.label}
+              </button>
             ))}
           </div>
+        </div>
 
-          {/* More Button */}
-          <div className="text-center">
-            <Button
-              variant="outline"
-              className="flex items-center space-x-2 px-6 py-2 text-base mx-auto border-gray-300 text-gray-700 hover:bg-gray-50"
+        <div className="space-y-3">
+          <LectureCard name="수업 이름" room="강의실 이름" status="많음" />
+          <LectureCard name="수업 이름" room="강의실 이름" status="많음" />
+        </div>
+      </div>
+
+      {/* 전체 강의 */}
+      <div>
+        <div className="flex items-center gap-2 text-[#202325] font-semibold mb-2 text-sm sm:text-base">
+          <Calendar className="w-5 h-5" />
+          전체 강의
+        </div>
+
+        {/* 정렬 필터 */}
+        <div className="flex flex-wrap gap-2 mb-4">
+          {filters.map((f) => (
+            <button
+              key={f.id}
+              onClick={() => setSelectedFilter(f.id)}
+              className={`px-3 sm:px-4 py-1 text-xs sm:text-sm rounded-md border
+                ${selectedFilter === f.id
+                  ? "bg-[#646B72] text-white border-transparent"
+                  : "text-[#555] border-[#DDE2E5]"}`}
             >
-              <span>더보기</span>
-              <ChevronDown className="w-5 h-5" />
-            </Button>
-          </div>
-        </section>
-      </main>
-      <Footer />
+              {f.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="space-y-3 mb-6">
+          <LectureCard name="수업 이름" room="강의실 이름" status="많음" />
+          <LectureCard name="수업 이름" room="강의실 이름" status="많음" />
+          <LectureCard name="수업 이름" room="강의실 이름" status="보통" />
+          <LectureCard name="수업 이름" room="강의실 이름" status="보통" />
+          <LectureCard name="수업 이름" room="강의실 이름" status="적음" />
+        </div>
+
+        <div className="flex justify-center">
+          <Button variant="outline" className="rounded-md text-[#555] border-[#D5DDE5]">
+            더보기 ▼
+          </Button>
+        </div>
+      </div>
     </div>
-  )
+  );
+}
+
+// ✅ 강의 카드 반응형
+function LectureCard({
+  name,
+  room,
+  status,
+}: {
+  name: string;
+  room: string;
+  status: "많음" | "보통" | "적음";
+}) {
+  const colorMap = {
+    많음: "#646B72",
+    보통: "#92B6FF",
+    적음: "#C8CFD6",
+  };
+
+  const navigate = useNavigate(); // ✅ 추가
+
+  const handleClick = () => {
+    navigate("/loading"); // ✅ 클릭 시 이동
+  };
+
+  return (
+    <div
+      onClick={handleClick} // ✅ 클릭 이벤트
+      className="cursor-pointer bg-white px-4 sm:px-6 py-3 sm:py-4 rounded-xl flex flex-col sm:flex-row sm:justify-between sm:items-center shadow-sm gap-2 sm:gap-0 hover:bg-[#F2F6F9] transition-colors"
+    >
+      <div className="text-[#202325] font-medium text-sm sm:text-base">
+        {name} <span className="text-xs sm:text-sm text-[#999]">({room})</span>
+      </div>
+      <Badge
+        style={{
+          backgroundColor: colorMap[status],
+          color: "#fff",
+        }}
+        className="text-xs sm:text-sm"
+      >
+        {status}
+      </Badge>
+    </div>
+  );
 }
