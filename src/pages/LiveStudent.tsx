@@ -26,6 +26,7 @@ function getLectureIdFromUrl() {
     const params = new URLSearchParams(window.location.search);
     return params.get("id") ?? "1";
 }
+
 const lectureId = getLectureIdFromUrl();
 
 interface ApiQA {
@@ -40,6 +41,7 @@ interface ApiQA {
     wonderedByCurrentUser?: boolean;
     medal?: boolean | null;
 }
+
 
 function mapApiToQAItem(api: ApiQA): QAItem {
     return {
