@@ -1,5 +1,5 @@
 import { ChevronDown, ChevronRight, MessageSquareText } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import ReportGuide from "@/components/ReportGuide"
@@ -7,29 +7,60 @@ import ReplyGuide from "@/components/ReplyGuide";
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 
-type QuestionStatus = "전체" | "미응답" | "응답 완료";
+type QuestionStatus = "전체" | "미응답" | "응답완료";
+
+// API 응답 타입 정의
+interface User {
+  email: string;
+  studentId: string;
+  point: number;
+  name: string;
+  avatar: string;
+}
+
+interface Answer {
+  id: number;
+  user: {
+    nickname: string;
+    role: string;
+  };
+  content: string;
+  createdAt: string;
+}
+
+interface Question {
+  id: number;
+  content: string;
+  status: string;
+  user: User;
+  answer: Answer[];
+  answerCount: number;
+  createdAt: string;
+  medal: string;
+  likes: number;
+  likedByCurrentUser: boolean;
+  wonder: number;
+  wonderedByCurrentUser: boolean;
+}
+
+interface ApiResponse {
+  [key: string]: Question[];
+}
 
 const initialQuestions: Array<{
     id: number;
     content: string;
-    CREATED_AT: string;
+    date: string;
     status: string;
-    answers: string[];
+    answers: Array<{
+        content: string;
+        createdAt: string;
+        user: {
+            nickname: string;
+            role: string;
+        };
+    }>;
 }> = [
-    {
-        id: 1,
-        content: "질문 내용: 질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용...",
-        CREATED_AT: "2025.00.00",
-        status: "미응답",
-        answers: [],
-    },
-    {
-        id: 2,
-        content: "질문 내용: 질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용...",
-        CREATED_AT: "2025.00.00",
-        status: "응답 완료",
-        answers: [],
-    }
 ];
 
 export function QAProfessor() {
@@ -42,6 +73,137 @@ export function QAProfessor() {
     const [openQuestionId, setOpenQuestionId] = useState<number | null>(null);
     const [answerInput, setAnswerInput] = useState("");
     const [answerEditIndex, setAnswerEditIndex] = useState<number | null>(null);
+    const [lectureId, setLectureId] = useState<number | null>(null);
+    const [lectureName, setLectureName] = useState<string>("");
+    const [roomName, setRoomName] = useState<string>("");
+
+    // 답변 저장 함수
+    const saveComment = async (questionId: number, content: string) => {
+        const API_BASE_URL = 'https://api.tikitaka.o-r.kr';
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/lectures/${lectureId}/questions/${questionId}/comments`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('Authorization'),
+                },
+                body: JSON.stringify({
+                    userId: 1,
+                    content: content
+                })
+            });
+            
+            if (response.ok) {
+                console.log('답변 저장 성공');
+                // 로컬 상태 업데이트
+                setQuestions(prev => prev.map(qq => qq.id === questionId ? { ...qq, answers: [...(qq.answers || []), { content, createdAt: new Date().toISOString(), user: { nickname: '교수님', role: 'professor' } }], status: "응답완료" } : qq));
+                setAnswerInput("");
+                setAnswerEditIndex(null);
+            } else {
+                console.error('답변 저장 실패:', response.status);
+                alert('답변 저장에 실패했습니다.');
+            }
+        } catch (error) {
+            console.error('답변 저장 중 오류:', error);
+            alert('답변 저장 중 오류가 발생했습니다.');
+        }
+    };
+
+    // AI 답변 조회 함수
+    const getAIResponse = async (questionId: number) => {
+        const API_BASE_URL = 'https://api.tikitaka.o-r.kr';
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/lectures/${lectureId}/questions/${questionId}/ai`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('Authorization'),
+                }
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                console.log('AI 답변 조회 성공:', data);
+                setAnswerInput(data.content); // textarea에 AI 답변 설정
+            } else {
+                console.error('AI 답변 조회 실패:', response.status);
+                alert('AI 답변 조회에 실패했습니다.');
+            }
+        } catch (error) {
+            console.error('AI 답변 조회 중 오류:', error);
+            alert('AI 답변 조회 중 오류가 발생했습니다.');
+        }
+    };
+
+    // 실시간 질문 조회 API
+    const fetchLiveQuestions = async (lectureId: number) => {
+        const API_BASE_URL = 'https://api.tikitaka.o-r.kr';
+        try {
+            const url = `${API_BASE_URL}/api/lectures/${lectureId}/live/questions`;
+            const res = await fetch(url, {
+                method: 'GET',
+                credentials: 'include',
+                headers: {
+                    'accept': '*/*',
+                    'Authorization': 'Bearer ' + localStorage.getItem('Authorization'),
+                }
+            });
+            
+            if (res.ok) {
+                const data: ApiResponse = await res.json();
+                console.log("실시간 질문 데이터:", data);
+                
+                // API 응답에서 질문 데이터 추출 및 변환
+                const allQuestions: Question[] = [];
+                Object.values(data).forEach(questionArray => {
+                    if (Array.isArray(questionArray)) {
+                        allQuestions.push(...questionArray);
+                    }
+                });
+                
+                // 기존 형식에 맞게 변환
+                const convertedQuestions = allQuestions.map((q: Question) => ({
+                    id: q.id,
+                    content: q.content,
+                    date: new Date(q.createdAt).toLocaleDateString('ko-KR'),
+                    status: selectedQuestionIds.includes(q.id) ? "미응답" : 
+                           (q.status === "WAITING" ? "미응답" : 
+                           q.status === "ANSWERED" ? "응답완료" : q.status),
+                    answers: q.answer.map(ans => ({
+                        content: ans.content,
+                        createdAt: ans.createdAt,
+                        user: ans.user
+                    })),
+                }));
+                
+                setQuestions(convertedQuestions);
+            } else {
+                console.error('실시간 질문 조회 실패:', res.status);
+                // 실패 시 기존 더미 데이터 유지
+            }
+        } catch (error) {
+            console.error('실시간 질문 조회 에러:', error);
+            // 에러 시 기존 더미 데이터 유지
+        }
+    };
+
+    // 컴포넌트 마운트 시 실시간 질문 조회
+    useEffect(() => {
+        // URL 파라미터에서 강의 ID, 강의 이름, 강의실 이름 가져오기
+        const urlParams = new URLSearchParams(window.location.search);
+        const lectureIdFromUrl = parseInt(urlParams.get('id') || '0'); // null 처리
+        const lectureNameFromUrl = urlParams.get('name') || ''; // 강의 이름
+        const roomNameFromUrl = urlParams.get('room') || ''; // 강의실 이름
+        
+        if (!isNaN(lectureIdFromUrl) && lectureIdFromUrl > 0) {
+            setLectureId(lectureIdFromUrl); // state에 저장
+            setLectureName(decodeURIComponent(lectureNameFromUrl)); // URL 디코딩
+            setRoomName(decodeURIComponent(roomNameFromUrl)); // URL 디코딩
+            fetchLiveQuestions(lectureIdFromUrl);
+        } else {
+            console.error('유효하지 않은 강의 ID입니다');
+        }
+    }, []);
 
     const handleCheckboxChange = (questionId: number) => {
         setSelectedQuestionIds((prev) =>
@@ -53,9 +215,11 @@ export function QAProfessor() {
 
     const handleReplySubmit = (replyText: string) => {
         console.log("Submitted reply:", replyText);
+        console.log("Selected question IDs:", selectedQuestionIds);
+        
         setQuestions(prevQuestions =>
             prevQuestions.map(q =>
-                selectedQuestionIds.includes(q.id) ? { ...q, status: "응답 완료" } : q
+                selectedQuestionIds.includes(q.id) ? { ...q, status: "응답완료" } : q
             )
         );
         setSelectedQuestionIds([]);
@@ -78,11 +242,11 @@ export function QAProfessor() {
                 <div className="flex items-center gap-2 text-sm text-gray-500 mb-8">
                     <span>나의 강의 리스트</span>
                     <ChevronRight className="w-4 h-4" />
-                    <span className="font-semibold text-gray-700">강의 이름 (강의실 이름)</span>
+                    <span className="font-semibold text-gray-700">{lectureName} ({roomName})</span>
                 </div>
 
                 <div className="text-center mb-12">
-                    <h1 className="text-4xl font-bold text-gray-800 mb-6">강의 이름</h1>
+                    <h1 className="text-4xl font-bold text-gray-800 mb-6">{lectureName}</h1>
                     <p className="text-gray-600">학생들의 질문을 답변하고 관리해보세요.</p>
                 </div>
 
@@ -115,7 +279,7 @@ export function QAProfessor() {
                     </div>
 
                     <div className="flex gap-2 mb-6">
-                        {(["전체", "미응답", "응답 완료"] as QuestionStatus[]).map((f) => (
+                        {(["전체", "미응답", "응답완료"] as QuestionStatus[]).map((f) => (
                             <Button
                                 key={f}
                                 variant={filter === f ? "default" : "outline"}
@@ -149,7 +313,7 @@ export function QAProfessor() {
                                         </div>
                                         <div className="flex items-center gap-6">
                                             <span className="text-sm text-gray-500">{q.date}</span>
-                                            <span className={`w-20 text-center py-1 text-xs font-semibold rounded-lg text-white ${q.status === '응답 완료' ? 'bg-[#5D89FF]' : 'bg-[#828C95]'}`}>{q.status}</span>
+                                            <span className={`w-20 text-center py-1 text-xs font-semibold rounded-lg text-white ${q.status === '응답완료' ? 'bg-[#5D89FF]' : 'bg-[#828C95]'}`}>{q.status}</span>
                                             <button onClick={() => setOpenQuestionId(isOpen ? null : q.id)}>
                                                 <ChevronDown className={`w-5 h-5 text-gray-500 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
                                             </button>
@@ -168,36 +332,30 @@ export function QAProfessor() {
                                                         onChange={e => setAnswerInput(e.target.value)}
                                                     />
                                                     <div className="flex justify-end gap-2 mt-4 font-semibold">
-                                                        <Button variant="outline" size="lg" className="border-gray-300 text-gray-700 px-6 font-semibold">AI 응답</Button>
+                                                        <Button variant="outline" size="lg" className="border-gray-300 text-gray-700 px-6 font-semibold" onClick={() => getAIResponse(q.id)}>AI 응답</Button>
                                                         <Button size="lg" className="bg-[#3B6CFF] hover:bg-[#3B6CFF]/90 px-6 text-white font-semibold" onClick={() => {
-                                                            setQuestions(prev => prev.map(qq => {
-                                                                if (qq.id === q.id) {
-                                                                    const newAnswers = [...(qq.answers || [])];
-                                                                    newAnswers[answerEditIndex] = answerInput;
-                                                                    return { ...qq, answers: newAnswers };
-                                                                }
-                                                                return qq;
-                                                            }));
-                                                            setAnswerInput("");
-                                                            setAnswerEditIndex(null);
+                                                            if (!answerInput.trim()) return;
+                                                            
+                                                            // 서버에 답변 저장
+                                                            saveComment(q.id, answerInput);
                                                         }}>작성 완료</Button>
                                                     </div>
                                                 </>
                                             ) : (
                                                 <>
-                                                    {(q.answers || []).map((ans: string, idx: number) => (
+                                                    {(q.answers || []).map((ans, idx: number) => (
                                                         <div key={idx} className="bg-[#F5F9FC] rounded-xl p-6 relative mb-4">
                                                             <div className="flex justify-between items-start">
                                                                 <div>
-                                                                    <div className="font-semibold text-[#646B72]">티키 (교수님)</div>
-                                                                    <div className="text-xs text-[#C8CFD6]">2025.00.00 오전 00:00</div>
+                                                                    <div className="font-semibold text-[#646B72]">{'티키'} ({'교수님'})</div>
+                                                                    <div className="text-xs text-[#C8CFD6]">{new Date(ans.createdAt).toLocaleString('ko-KR')}</div>
                                                                 </div>
                                                                 <button className="text-[#646B72] text-sm font-semibold hover:underline hover:decoration-[#646B72] underline-offset-4" onClick={() => {
-                                                                    setAnswerInput(ans);
+                                                                    setAnswerInput(ans.content);
                                                                     setAnswerEditIndex(idx);
                                                                 }}>수정하기</button>
                                                             </div>
-                                                            <div className="mt-2 text-[#191A1C] whitespace-pre-line">{ans}</div>
+                                                            <div className="mt-2 text-[#191A1C] whitespace-pre-line">{ans.content}</div>
                                                         </div>
                                                     ))}
                                                     <textarea
@@ -207,11 +365,12 @@ export function QAProfessor() {
                                                         onChange={e => setAnswerInput(e.target.value)}
                                                     />
                                                     <div className="flex justify-end gap-2 mt-4">
-                                                        <Button variant="outline" size="lg" className="border-gray-300 text-gray-700 px-6 font-semibold">AI 응답</Button>
+                                                        <Button variant="outline" size="lg" className="border-gray-300 text-gray-700 px-6 font-semibold" onClick={() => getAIResponse(q.id)}>AI 응답</Button>
                                                         <Button size="lg" className="bg-[#3B6CFF] hover:bg-[#3B6CFF]/90 px-6 text-white font-semibold" onClick={() => {
                                                             if (!answerInput.trim()) return;
-                                                            setQuestions(prev => prev.map(qq => qq.id === q.id ? { ...qq, answers: [...(qq.answers || []), answerInput], status: "응답 완료" } : qq));
-                                                            setAnswerInput("");
+                                                            
+                                                            // 서버에 답변 저장
+                                                            saveComment(q.id, answerInput);
                                                         }}>작성 완료</Button>
                                                     </div>
                                                 </>
@@ -231,7 +390,14 @@ export function QAProfessor() {
                 </div>
             </div>
 
-            <ReplyGuide open={replyModalOpen} onClose={() => setReplyModalOpen(false)} questionContents={selectedQuestionContents} onSubmit={handleReplySubmit} />
+            <ReplyGuide 
+                open={replyModalOpen} 
+                onClose={() => setReplyModalOpen(false)} 
+                questionContents={selectedQuestionContents} 
+                questionIDs={selectedQuestionIds.map(String)}
+                lectureId={lectureId?.toString()}
+                onSubmit={handleReplySubmit} 
+            />
             <ReportGuide open={reportModalOpen} onClose={() => setReportModalOpen(false)} />
 
             <button

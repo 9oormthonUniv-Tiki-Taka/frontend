@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 // import StudentIdAuth from "@/components/StudentIdAuth";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://api.tikitaka.o-r.kr';
+const API_BASE_URL = 'https://api.tikitaka.o-r.kr';
 
 export function OAuthCallback() {
   const navigate = useNavigate();
