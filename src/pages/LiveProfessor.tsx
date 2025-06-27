@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Card, CardContent } from "@/components/ui/card"
 import Header from "@/components/Header"
 import ReportGuide from "@/components/ReportGuide"
+import { useNavigate } from "react-router-dom"
 
 interface QAItem {
     id: string
@@ -119,6 +120,8 @@ export default function LiveProfessor() {
     return (
         <div className="absolute top-0 left-0 w-full min-h-screen flex flex-col bg-[#F2F6F9]">
             <Header />
+            {/* 뒤로가기 버튼 */}
+            <BackButton />
             <main className="w-full flex-1 flex justify-center">
                 <div className="w-full max-w-[1000px] px-4">                {qas.length === 0 ? (
                     <div className="flex flex-1 items-center justify-center text-center px-8">
@@ -227,5 +230,20 @@ export default function LiveProfessor() {
             )}
         </div>
     )
+}
+
+function BackButton() {
+    const navigate = useNavigate();
+    return (
+        <button
+            className="mt-4 flex items-center text-2xl font-bold text-gray-800 w-10 h-10 justify-center hover:bg-gray-100 transition"
+            style={{ marginLeft: "20%" }}
+            onClick={() => navigate("/listp")}
+            aria-label="뒤로가기"
+            type="button"
+        >
+            {'<'}
+        </button>
+    );
 }
 
