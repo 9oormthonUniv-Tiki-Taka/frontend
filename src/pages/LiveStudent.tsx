@@ -26,9 +26,24 @@ function getLectureIdFromUrl() {
     const params = new URLSearchParams(window.location.search);
     return params.get("id") ?? "1";
 }
-let lectureId = getLectureIdFromUrl();
 
-function mapApiToQAItem(api: any): QAItem {
+const lectureId = getLectureIdFromUrl();
+
+interface ApiQA {
+    id: string;
+    user?: { nickname?: string };
+    created_at?: string;
+    content?: string;
+    answer?: { content?: string };
+    likes?: number;
+    wonder?: number;
+    likedByCurrentUser?: boolean;
+    wonderedByCurrentUser?: boolean;
+    medal?: boolean | null;
+}
+
+
+function mapApiToQAItem(api: ApiQA): QAItem {
     return {
         id: api.id,
         user: api.user?.nickname ?? "익명",
