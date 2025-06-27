@@ -1,5 +1,5 @@
 import { ChevronDown, ChevronRight, MessageSquareText } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import ReportGuide from "@/components/ReportGuide"
@@ -18,14 +18,14 @@ const initialQuestions: Array<{
 }> = [
     {
         id: 1,
-        content: "질문 내용: 질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용...",
+        content: "질문 내용: 질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용...",
         date: "2025.00.00",
         status: "미응답",
         answers: [],
     },
     {
         id: 2,
-        content: "질문 내용: 질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용...",
+        content: "질문 내용: 질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용...",
         date: "2025.00.00",
         status: "응답 완료",
         answers: [],
@@ -46,7 +46,7 @@ const initialQuestions: Array<{
     },
     {
         id: 5,
-        content: "질문 내용: 질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용...",
+        content: "질문 내용: 질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용...",
         date: "2025.00.00",
         status: "응답 완료",
         answers: [],
@@ -72,35 +72,15 @@ export function QAProfessor() {
         );
     };
 
-    const handleReplySubmit = async (replyText: string) => {
-        const lectureId = 100; // 실제 강의 ID로 교체 가능
-        // const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://api.tikitaka.o-r.kr';
-        const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '172.31.97.123:8080';
-        try {
-            const url = `${API_BASE_URL}/api/lectures/${lectureId}/questions`;
-            const res = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'accept': '*/*',
-                },
-                body: JSON.stringify({
-                    questionIDs: selectedQuestionIds.map(String),
-                    content: replyText
-                })
-            });
-            if (res.ok) {
-                // 성공 시 질문 목록 새로고침
-                await fetchQuestions(lectureId, 'success', 'recent', 1);
-                setSelectedQuestionIds([]);
-                setReplyModalOpen(false);
-            } else {
-                alert('일괄 응답에 실패했습니다.');
-            }
-        } catch (error) {
-            console.error('일괄 응답 에러:', error);
-            alert('일괄 응답 중 오류가 발생했습니다.');
-        }
+    const handleReplySubmit = (replyText: string) => {
+        console.log("Submitted reply:", replyText);
+        setQuestions(prevQuestions =>
+            prevQuestions.map(q =>
+                selectedQuestionIds.includes(q.id) ? { ...q, status: "응답 완료" } : q
+            )
+        );
+        setSelectedQuestionIds([]);
+        setReplyModalOpen(false);
     };
 
     const filteredQuestions =
@@ -111,47 +91,6 @@ export function QAProfessor() {
     const selectedQuestionContents = questions
         .filter(q => selectedQuestionIds.includes(q.id))
         .map(q => q.content);
-
-    // 실제 질문 목록을 API에서 받아오는 함수
-    const fetchQuestions = async (
-        lectureId: number = 100,
-        status: string = 'success',
-        sort: string = 'recent',
-        page: number = 1
-    ) => {
-        // const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://api.tikitaka.o-r.kr';
-        const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://172.31.97.123:8080';
-        try {
-            const url = `${API_BASE_URL}/api/lectures/${lectureId}/questions?status=${status}&sort=${sort}&page=${page}`;
-            const res = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    'accept': '*/*',
-                    'Authorization' : 'Bearer ' + localStorage.getItem('Authorization'),
-                }
-            });
-            const data = await res.json();
-            console.log("질문 데이터:", data);
-            if (Array.isArray(data.questions)) {
-                setQuestions(data.questions.map((q: Record<string, any>) => ({
-                    id: q.id,
-                    content: q.content,
-                    date: q.date || q.created_at || '',
-                    status: q.status || '',
-                    answers: q.answers || [],
-                })));
-            } else {
-                setQuestions([]);
-            }
-        } catch (error) {
-            console.error('질문 목록 조회 에러:', error);
-            setQuestions([]);
-        }
-    };
-
-    useEffect(() => {
-        fetchQuestions(100, 'success', 'recent', 1);
-    }, []);
 
     return (
         <div className="absolute top-0 left-0 w-full min-h-screen flex flex-col bg-[#F2F6F9]">
