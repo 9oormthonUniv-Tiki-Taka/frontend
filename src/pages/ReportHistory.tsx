@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const 신고내역 = () => {
+const ReportHistory = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const pages = [1, 2, 3, 4, 5];
 
@@ -65,4 +65,4 @@ const 신고내역 = () => {
   );
 };
 
-export default 신고내역;
+export default ReportHistory;

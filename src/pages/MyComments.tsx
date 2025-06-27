@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const 작성한댓글 = () => {
+const MyComments = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const pages = [1, 2, 3, 4, 5];
 
@@ -49,4 +49,4 @@ const 작성한댓글 = () => {
   );
 };
 
-export default 작성한댓글;
+export default MyComments;

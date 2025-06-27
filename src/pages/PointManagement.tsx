@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const 포인트관리 = () => {
+const PointManagement = () => {
   const [activeTab, setActiveTab] = useState("전체");
   const [currentPage, setCurrentPage] = useState(1);
   const tabs = ["전체", "획득내역", "사용내역"];
@@ -98,4 +98,4 @@ const 포인트관리 = () => {
   );
 };
 
-export default 포인트관리;
+export default PointManagement;

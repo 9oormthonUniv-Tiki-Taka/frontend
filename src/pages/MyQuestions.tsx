@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const 나의질문 = () => {
+const MyQuestions = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const pages = [1, 2, 3, 4, 5];
 
@@ -106,4 +106,4 @@ const 나의질문 = () => {
   );
 };
 
-export default 나의질문;
+export default MyQuestions;
