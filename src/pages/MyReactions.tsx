@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const 남긴반응 = () => {
+const MyReactions = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [activeTab, setActiveTab] = useState("전체");
   const [showModal, setShowModal] = useState(false);
@@ -117,4 +117,4 @@ const 남긴반응 = () => {
   );
 };
 
-export default 남긴반응;
+export default MyReactions;
