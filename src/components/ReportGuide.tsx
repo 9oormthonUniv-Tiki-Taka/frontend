@@ -16,17 +16,19 @@ const reasons = [
 interface ReportModalProps {
   open: boolean
   onClose: () => void
-  onSubmit?: () => void
+  onSubmit?: (reason: string) => void
   questionContent?: string
 }
 
 export default function ReportGuide({ open, onClose, onSubmit, questionContent }: ReportModalProps) {
   const [selectedReason, setSelectedReason] = useState<string | null>(null)
+  const [etcReason, setEtcReason] = useState<string>("")
 
   const handleSubmit = () => {
     if (!selectedReason) return
-    console.log("신고 사유:", selectedReason)
-    if (onSubmit) onSubmit();
+    const reasonToSend = selectedReason === "기타" ? etcReason.trim() : selectedReason
+    if (!reasonToSend) return
+    if (onSubmit) onSubmit(reasonToSend)
     onClose()
   }
 
@@ -90,12 +92,21 @@ export default function ReportGuide({ open, onClose, onSubmit, questionContent }
                 <textarea
                   className="w-full h-16 p-2 rounded bg-[#F5F9FC] border border-[#F5F9FC] focus:outline-none focus:ring-0 focus:border-transparent text-sm"
                   placeholder="기타 사유 작성"
+                  value={etcReason}
+                  onChange={e => setEtcReason(e.target.value)}
                 />
               </div>
             </div>
           )}
         </div>
-        <Button onClick={handleSubmit} disabled={!selectedReason} className="w-full mt-4 bg-[#3B6CFF] hover:bg-[#3B6CFF] active:bg-[#3B6CFF] focus:bg-[#3B6CFF] border-none text-white">
+        <Button
+          onClick={handleSubmit}
+          disabled={
+            !selectedReason ||
+            (selectedReason === "기타" && !etcReason.trim())
+          }
+          className="w-full mt-4 bg-[#3B6CFF] hover:bg-[#3B6CFF] active:bg-[#3B6CFF] focus:bg-[#3B6CFF] border-none text-white"
+        >
           신고하기
         </Button>
       </DialogContent>

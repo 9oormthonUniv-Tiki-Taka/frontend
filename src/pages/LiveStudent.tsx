@@ -323,6 +323,23 @@ export default function LiveStudent() {
                         ? qas.find((qa) => qa.id === reportTargetId)?.question ?? ""
                         : ""
                 }
+                onSubmit={async (reason: string) => {
+                    if (!reportTargetId) return;
+                    const payload = {
+                        targetType: "question",
+                        targetId: reportTargetId,
+                        reason,
+                    };
+                    console.log("신고 데이터 전송:", payload);
+                    await fetch("/api/reports", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(payload),
+                    });
+                    setReportModalOpen(false);
+                }}
             />
 
             <div className="sticky bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-6 px-8">
