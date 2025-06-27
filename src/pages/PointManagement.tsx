@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 const PointManagement = () => {
   const [activeTab, setActiveTab] = useState("전체");
