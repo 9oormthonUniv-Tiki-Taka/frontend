@@ -16,62 +16,20 @@ const reasons = [
 interface ReportModalProps {
   open: boolean
   onClose: () => void
-  onSubmit?: () => void
+  onSubmit?: (reason: string) => void
   questionContent?: string
-  targetType?: string
-  targetId?: number
 }
 
-export default function ReportGuide({ open, onClose, onSubmit, questionContent, targetType, targetId }: ReportModalProps) {
+export default function ReportGuide({ open, onClose, onSubmit, questionContent }: ReportModalProps) {
   const [selectedReason, setSelectedReason] = useState<string | null>(null)
-  const [etcReason, setEtcReason] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
+  const [etcReason, setEtcReason] = useState<string>("")
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (!selectedReason) return
-    
-    setIsLoading(true)
-    
-    try {
-      // 신고 사유 결정 (기타인 경우 사용자 입력 사용)
-      const finalReason = selectedReason === "기타" ? etcReason : selectedReason
-      
-      if (selectedReason === "기타" && !etcReason.trim()) {
-        alert("기타 사유를 입력해주세요.")
-        setIsLoading(false)
-        return
-      }
-
-      // 신고 API 호출
-      const response = await fetch('https://api.tikitaka.o-r.kr/api/reports', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          targetType: targetType || "question", // 기본값 설정
-          targetId: targetId || 0,
-          reason: finalReason
-        })
-      })
-
-      if (response.ok) {
-        const result = await response.json()
-        console.log("신고 등록 완료:", result)
-        alert("신고가 등록되었습니다.")
-        
-        if (onSubmit) onSubmit();
-        onClose()
-      } else {
-        console.error("신고 등록 실패:", response.status)
-        alert("신고 등록에 실패했습니다. 다시 시도해주세요.")
-      }
-    } catch (error) {
-      console.error("신고 등록 중 오류:", error)
-      alert("신고 등록 중 오류가 발생했습니다. 다시 시도해주세요.")
-    } finally {
-      setIsLoading(false)
-    }
+    const reasonToSend = selectedReason === "기타" ? etcReason.trim() : selectedReason
+    if (!reasonToSend) return
+    if (onSubmit) onSubmit(reasonToSend)
+    onClose()
   }
 
   return (
@@ -132,21 +90,24 @@ export default function ReportGuide({ open, onClose, onSubmit, questionContent, 
             <div className="bg-[#F5F9FC] border-t border-[#C8CFD6] px-4 py-4" style={{ margin: '0.5rem 0', background: '#fff' }}>
               <div className="bg-[#F5F9FC] rounded p-3">
                 <textarea
-                  value={etcReason}
-                  onChange={(e) => setEtcReason(e.target.value)}
                   className="w-full h-16 p-2 rounded bg-[#F5F9FC] border border-[#F5F9FC] focus:outline-none focus:ring-0 focus:border-transparent text-sm"
                   placeholder="기타 사유 작성"
+                  value={etcReason}
+                  onChange={e => setEtcReason(e.target.value)}
                 />
               </div>
             </div>
           )}
         </div>
-        <Button 
-          onClick={handleSubmit} 
-          disabled={!selectedReason || isLoading} 
-          className="w-full mt-4 bg-[#3B6CFF] hover:bg-[#3B6CFF] active:bg-[#3B6CFF] focus:bg-[#3B6CFF] border-none text-white disabled:opacity-50"
+        <Button
+          onClick={handleSubmit}
+          disabled={
+            !selectedReason ||
+            (selectedReason === "기타" && !etcReason.trim())
+          }
+          className="w-full mt-4 bg-[#3B6CFF] hover:bg-[#3B6CFF] active:bg-[#3B6CFF] focus:bg-[#3B6CFF] border-none text-white"
         >
-          {isLoading ? "신고 중..." : "신고하기"}
+          신고하기
         </Button>
       </DialogContent>
     </Dialog>

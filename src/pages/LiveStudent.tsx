@@ -32,8 +32,8 @@ function mapApiToQAItem(api: any): QAItem {
         answer: api.answer?.content ?? undefined,
         likeCount: api.likes ?? 0,
         curiousCount: api.wonder ?? 0,
-        liked: false,
-        curious: false,
+        liked: api.likedByCurrentUser,
+        curious: api.wonderedByCurrentUser,
         awarded: api.medal ? true : false,
         flaged: false,
     }
@@ -74,24 +74,41 @@ export default function LiveStudent() {
                     ? {
                         ...qa,
                         liked: !qa.liked,
-                        likeCount: (qa.likeCount ?? 0) + (qa.liked ? -1 : 1),
+                        likeCount: qa.liked
+                            ? Math.max(0, (qa.likeCount ?? 1) - 1)
+                            : (qa.likeCount ?? 0) + 1,
                     }
                     : qa
             )
         );
-        // 소켓 요청 추가
-        const ws = new WebSocket(`ws://localhost:3001/api/lectures/${lectureId}/live`);
-        ws.onopen = () => {
-            ws.send(JSON.stringify({
-                type: "like",
-                request: {
-                    questionId: id,
-                    type: "",
-                    amount: ""
-                }
-            }));
-            ws.close();
-        };
+        // 최신 상태를 기반으로 전송
+        setTimeout(() => {
+            const updated = qas.find((qa) => qa.id === id);
+            const isLiked = updated?.liked ?? false;
+            const likeCount = updated?.likeCount ?? 0;
+            const newLiked = !isLiked;
+            const newLikeCount = newLiked
+                ? likeCount + 1
+                : Math.max(0, likeCount - 1);
+
+            console.log(`like 클릭: id=${id}, liked(이전)=${isLiked}, liked(다음)=${newLiked}, likeCount(전송)=${newLikeCount}`);
+
+            const ws = new WebSocket(`ws://localhost:3001/api/lectures/${lectureId}/live`);
+            ws.onopen = () => {
+                ws.send(JSON.stringify({
+                    type: "like",
+                    request: {
+                        questionId: id,
+                        type: "",
+                        amount: newLikeCount
+                    }
+                }));
+                ws.close();
+            };
+            ws.onclose = () => {
+                fetchQuestions();
+            };
+        }, 0);
     }
 
     const handleCurious = (id: string) => {
@@ -101,24 +118,40 @@ export default function LiveStudent() {
                     ? {
                         ...qa,
                         curious: !qa.curious,
-                        curiousCount: (qa.curiousCount ?? 0) + (qa.curious ? -1 : 1),
+                        curiousCount: qa.curious
+                            ? Math.max(0, (qa.curiousCount ?? 1) - 1)
+                            : (qa.curiousCount ?? 0) + 1,
                     }
                     : qa
             )
         );
-        // 소켓 요청 추가
-        const ws = new WebSocket(`ws://localhost:3001/api/lectures/${lectureId}/live`);
-        ws.onopen = () => {
-            ws.send(JSON.stringify({
-                type: "wonder",
-                request: {
-                    questionId: id,
-                    type: "",
-                    amount: ""
-                }
-            }));
-            ws.close();
-        };
+        setTimeout(() => {
+            const updated = qas.find((qa) => qa.id === id);
+            const isCurious = updated?.curious ?? false;
+            const curiousCount = updated?.curiousCount ?? 0;
+            const newCurious = !isCurious;
+            const newCuriousCount = newCurious
+                ? curiousCount + 1
+                : Math.max(0, curiousCount - 1);
+
+            console.log(`wonder 클릭: id=${id}, curious(이전)=${isCurious}, curious(다음)=${newCurious}, curiousCount(전송)=${newCuriousCount}`);
+
+            const ws = new WebSocket(`ws://localhost:3001/api/lectures/${lectureId}/live`);
+            ws.onopen = () => {
+                ws.send(JSON.stringify({
+                    type: "wonder",
+                    request: {
+                        questionId: id,
+                        type: "",
+                        amount: newCuriousCount
+                    }
+                }));
+                ws.close();
+            };
+            ws.onclose = () => {
+                fetchQuestions();
+            };
+        }, 0);
     }
 
     const handleEdit = (id: string) => {
@@ -290,6 +323,23 @@ export default function LiveStudent() {
                         ? qas.find((qa) => qa.id === reportTargetId)?.question ?? ""
                         : ""
                 }
+                onSubmit={async (reason: string) => {
+                    if (!reportTargetId) return;
+                    const payload = {
+                        targetType: "question",
+                        targetId: reportTargetId,
+                        reason,
+                    };
+                    console.log("신고 데이터 전송:", payload);
+                    await fetch("/api/reports", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(payload),
+                    });
+                    setReportModalOpen(false);
+                }}
             />
 
             <div className="sticky bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-6 px-8">
