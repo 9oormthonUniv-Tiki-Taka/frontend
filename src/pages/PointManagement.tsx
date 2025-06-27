@@ -1,4 +1,3 @@
-// import React from 'react'; // 사용하지 않으므로 주석 처리
 import { useState } from "react";
 
 const PointManagement = () => {
@@ -36,10 +35,9 @@ const PointManagement = () => {
                 setCurrentPage(1);
               }}
               className={`px-4 py-1.5 rounded-md border text-sm transition
-                ${
-                  activeTab === tab
-                    ? "bg-gray-700 text-white"
-                    : "bg-white text-gray-700 hover:bg-gray-100"
+                ${activeTab === tab
+                  ? "bg-gray-700 text-white"
+                  : "bg-white text-gray-700 hover:bg-gray-100"
                 }`}
             >
               {tab}
@@ -66,9 +64,8 @@ const PointManagement = () => {
                   <div className="text-gray-400 text-xs">{item.date}</div>
                 </div>
                 <div
-                  className={`font-semibold ${
-                    item.point.startsWith("-") ? "text-red-500" : "text-gray-900"
-                  }`}
+                  className={`font-semibold ${item.point.startsWith("-") ? "text-red-500" : "text-gray-900"
+                    }`}
                 >
                   {item.point}
                 </div>
@@ -84,10 +81,9 @@ const PointManagement = () => {
               key={num}
               onClick={() => setCurrentPage(num)}
               className={`w-8 h-8 text-center rounded transition-colors duration-200
-                ${
-                  currentPage === num
-                    ? "bg-white text-black font-semibold"
-                    : "bg-transparent text-gray-400 hover:text-black"
+                ${currentPage === num
+                  ? "bg-white text-black font-semibold"
+                  : "bg-transparent text-gray-400 hover:text-black"
                 }`}
             >
               {num}
