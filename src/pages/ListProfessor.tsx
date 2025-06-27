@@ -17,7 +17,7 @@ const questions = [
   { id: 2, label: "질문 적음" },
 ];
 
-export default function LectureListPage() {
+export default function ListProfessor() {
   const [selectedFilter, setSelectedFilter] = useState(1);
   const [selectedQuestion, setSelectedQuestion] = useState<number | null>(null);
 
@@ -116,7 +116,7 @@ export default function LectureListPage() {
   );
 }
 
-// ✅ 강의 카드 반응형
+// 강의 카드 반응형
 function LectureCard({
   name,
   room,
@@ -132,15 +132,15 @@ function LectureCard({
     적음: "#C8CFD6",
   };
 
-  const navigate = useNavigate(); // ✅ 추가
+  const navigate = useNavigate(); 
 
   const handleClick = () => {
-    navigate("/loading"); // ✅ 클릭 시 이동
+    navigate("/loading"); 
   };
 
   return (
     <div
-      onClick={handleClick} // ✅ 클릭 이벤트
+      onClick={handleClick} 
       className="cursor-pointer bg-white px-4 sm:px-6 py-3 sm:py-4 rounded-xl flex flex-col sm:flex-row sm:justify-between sm:items-center shadow-sm gap-2 sm:gap-0 hover:bg-[#F2F6F9] transition-colors"
     >
       <div className="text-[#202325] font-medium text-sm sm:text-base">

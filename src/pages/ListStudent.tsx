@@ -12,7 +12,7 @@ const filters = [
   { id: 2, label: "이름 순 (가나다)" },
 ];
 
-export default function ListProfessor() {
+export default function ListStudent() {
   const [selectedFilter, setSelectedFilter] = useState(1); // 기본 선택: 질문 많은 순
 
   return (
@@ -98,11 +98,11 @@ export default function ListProfessor() {
 }
 
 function HoverCard() {
-  const navigate = useNavigate(); // ✅ navigate 훅 추가
+  const navigate = useNavigate(); 
 
   return (
     <div
-      onClick={() => navigate("/loading")} // ✅ 클릭 시 이동
+      onClick={() => navigate("/loading")} 
       className="group flex justify-between items-center bg-white hover:bg-[#E9EEF2] transition-colors rounded-md py-4 px-5 text-sm text-gray-700 border border-gray-200 cursor-pointer"
     >
       수업 이름 (강의실 이름)
