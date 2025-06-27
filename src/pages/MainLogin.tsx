@@ -56,7 +56,7 @@ export function MainLogin() {
         } else if (email.length === 0) {
             setStatus("default");
         }
-    }, [email]);
+    }, [email, status]);
 
     // 서비스워커 등록 및 푸시 구독
     useEffect(() => {

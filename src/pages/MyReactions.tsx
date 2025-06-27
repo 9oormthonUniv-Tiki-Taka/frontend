@@ -1,10 +1,10 @@
-// import React from 'react'; // 사용하지 않으므로 주석 처리
 import { useState } from "react";
 
 const MyReactions = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [activeTab, setActiveTab] = useState("전체");
   const [showModal, setShowModal] = useState(false);
+  const [, setDeleteIndex] = useState<number | null>(null);
 
   const pages = [1, 2, 3, 4, 5];
   const tabs = ["전체", "좋아요", "궁금해요"];
@@ -16,12 +16,14 @@ const MyReactions = () => {
     { category: "강의 이름", content: "질문 내용" },
   ];
 
-  const handleDeleteClick = () => {
+  const handleDeleteClick = (index: number) => {
+    setDeleteIndex(index);
     setShowModal(true);
   };
 
   const handleConfirmDelete = () => {
     setShowModal(false);
+    setDeleteIndex(null);
   };
 
   return (
@@ -36,10 +38,9 @@ const MyReactions = () => {
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`px-4 py-1.5 rounded-md border text-sm font-medium transition
-                ${
-                  activeTab === tab
-                    ? "bg-gray-700 text-white"
-                    : "bg-white text-gray-700 hover:bg-gray-100"
+                ${activeTab === tab
+                  ? "bg-gray-700 text-white"
+                  : "bg-white text-gray-700 hover:bg-gray-100"
                 }`}
             >
               {tab}
@@ -57,7 +58,7 @@ const MyReactions = () => {
                   {item.content}
                 </p>
                 <button
-                  onClick={() => handleDeleteClick()}
+                  onClick={() => handleDeleteClick(index)}
                   className="absolute top-0 right-0 text-gray-400 hover:text-red-400"
                 >
                   ✕
@@ -74,10 +75,9 @@ const MyReactions = () => {
               key={num}
               onClick={() => setCurrentPage(num)}
               className={`w-8 h-8 text-center rounded transition-colors duration-200
-                ${
-                  currentPage === num
-                    ? "bg-white text-black font-semibold"
-                    : "bg-transparent text-gray-400 hover:text-black"
+                ${currentPage === num
+                  ? "bg-white text-black font-semibold"
+                  : "bg-transparent text-gray-400 hover:text-black"
                 }`}
             >
               {num}

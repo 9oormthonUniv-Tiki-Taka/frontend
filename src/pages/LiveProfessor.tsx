@@ -21,7 +21,18 @@ interface QAItem {
 
 const lectureId = "1"
 
-function mapApiToQAItem(api: any): QAItem {
+interface ApiQA {
+    id: string;
+    user?: { nickname?: string };
+    created_at?: string;
+    content?: string;
+    answer?: { content?: string };
+    likes?: number;
+    wonder?: number;
+    medal?: boolean | null;
+}
+
+function mapApiToQAItem(api: ApiQA): QAItem {
     return {
         id: api.id,
         user: api.user?.nickname ?? "익명",

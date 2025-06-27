@@ -1,5 +1,4 @@
-// import React from 'react'; // 사용하지 않으므로 주석 처리
-import { useState } from "react";
+import React, { useState } from "react";
 
 const ReportHistory = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -51,10 +50,9 @@ const ReportHistory = () => {
               key={num}
               onClick={() => setCurrentPage(num)}
               className={`w-8 h-8 text-center rounded transition-colors duration-200
-                ${
-                  currentPage === num
-                    ? "bg-white text-black font-semibold"
-                    : "bg-transparent text-gray-400 hover:text-black"
+                ${currentPage === num
+                  ? "bg-white text-black font-semibold"
+                  : "bg-transparent text-gray-400 hover:text-black"
                 }`}
             >
               {num}
