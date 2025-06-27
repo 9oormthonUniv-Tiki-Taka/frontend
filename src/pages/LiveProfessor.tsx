@@ -86,7 +86,19 @@ export default function LiveProfessor() {
     }
 
     const handleToggleAward = (id: string) => {
-        setQAs((prev) => prev.map((qa) => (qa.id === id ? { ...qa, awarded: !qa.awarded } : qa)))
+        setQAs((prev) => prev.map((qa) => (qa.id === id ? { ...qa, awarded: !qa.awarded } : qa)));
+        const ws = new WebSocket(`ws://localhost:3001/api/lectures/${lectureId}/live`);
+        ws.onopen = () => {
+            ws.send(JSON.stringify({
+                type: "medal",
+                request: {
+                    questionId: id,
+                    type: "medal",
+                    amount: "gold"
+                }
+            }));
+            ws.close();
+        };
     }
 
     const handleToggleFlag = (id: string) => {
