@@ -1,9 +1,8 @@
 import { Calendar, ChevronDown, ChevronRight, Search } from "lucide-react";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 
 const filters = [
@@ -14,6 +13,15 @@ const filters = [
 
 export default function ListStudent() {
   const [selectedFilter, setSelectedFilter] = useState(1); // 기본 선택: 질문 많은 순
+  const [lectures, setLectures] = useState<{ id: string; name: string; room: string }[]>([]);
+
+  // 강의 데이터 fetch
+  useEffect(() => {
+    fetch("http://localhost:3001/api/lectures")
+      .then((res) => res.json())
+      .then((data) => setLectures(data.lectures || []))
+      .catch(() => setLectures([]));
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#F8FBFF] px-4 py-12">
@@ -47,8 +55,8 @@ export default function ListStudent() {
           </div>
 
           <div className="space-y-3">
-            {Array.from({ length: 2 }).map((_, i) => (
-              <HoverCard key={i} />
+            {lectures.slice(0, 2).map((lecture, i) => (
+              <HoverCard key={lecture.id || i} lecture={lecture} />
             ))}
           </div>
         </section>
@@ -65,11 +73,10 @@ export default function ListStudent() {
             {filters.map((f) => (
               <button
                 key={f.id}
-                className={`text-sm px-4 py-2 rounded-full transition-colors ${
-                  selectedFilter === f.id
-                    ? "bg-[#646B72] text-white"
-                    : "bg-[#F2F6F9] text-[#323639] hover:bg-[#E9EEF2]"
-                }`}
+                className={`text-sm px-4 py-2 rounded-full transition-colors ${selectedFilter === f.id
+                  ? "bg-[#646B72] text-white"
+                  : "bg-[#F2F6F9] text-[#323639] hover:bg-[#E9EEF2]"
+                  }`}
                 onClick={() => setSelectedFilter(f.id)}
               >
                 {f.label}
@@ -79,33 +86,33 @@ export default function ListStudent() {
 
           {/* 강의 리스트 */}
           <div className="space-y-3">
-            {Array.from({ length: 5 }).map((_, index) => (
-              <HoverCard key={index} />
+            {lectures.map((lecture) => (
+              <HoverCard key={lecture.id} lecture={lecture} />
             ))}
           </div>
 
           {/* 더보기 버튼 */}
           <div className="w-full text-center mt-8">
-  <button className="border border-gray-300 px-5 py-2 text-sm rounded-md flex items-center justify-center gap-1 hover:bg-gray-100 mx-auto">
-    <span>더보기</span>
-    <ChevronDown className="w-4 h-4" />
-  </button>
-</div>
+            <button className="border border-gray-300 px-5 py-2 text-sm rounded-md flex items-center justify-center gap-1 hover:bg-gray-100 mx-auto">
+              <span>더보기</span>
+              <ChevronDown className="w-4 h-4" />
+            </button>
+          </div>
         </section>
       </div>
     </div>
   );
 }
 
-function HoverCard() {
-  const navigate = useNavigate(); 
+function HoverCard({ lecture }: { lecture: { id: string; name: string; room: string } }) {
+  const navigate = useNavigate();
 
   return (
     <div
-      onClick={() => navigate("/loading")} 
+      onClick={() => navigate(`/lives?id=${lecture.id}`)}
       className="group flex justify-between items-center bg-white hover:bg-[#E9EEF2] transition-colors rounded-md py-4 px-5 text-sm text-gray-700 border border-gray-200 cursor-pointer"
     >
-      수업 이름 (강의실 이름)
+      {lecture.name} ({lecture.room})
       <ChevronRight className="w-4 h-4 text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity duration-150" />
     </div>
   );

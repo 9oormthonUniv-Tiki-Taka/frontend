@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import Header from "@/components/Header"
 import ReportGuide from "@/components/ReportGuide"
+import { useNavigate } from "react-router-dom"
 
 interface QAItem {
     id: string
@@ -21,7 +22,11 @@ interface QAItem {
     flaged?: boolean
 }
 
-const lectureId = "1"
+function getLectureIdFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("id") ?? "1";
+}
+let lectureId = getLectureIdFromUrl();
 
 function mapApiToQAItem(api: any): QAItem {
     return {
@@ -197,6 +202,8 @@ export default function LiveStudent() {
     return (
         <div className="absolute top-0 left-0 w-full min-h-screen flex flex-col bg-[#F2F6F9]">
             <Header />
+            {/* 뒤로가기 버튼 */}
+            <BackButton />
             <main className="w-full flex-1 flex justify-center">
                 <div className="w-full max-w-[1000px] px-4">
                     {qas.length === 0 ? (
@@ -357,4 +364,19 @@ export default function LiveStudent() {
             </div>
         </div>
     )
+}
+
+function BackButton() {
+    const navigate = useNavigate();
+    return (
+        <button
+            className="mt-4 flex items-center text-2xl font-bold text-gray-800 w-10 h-10 justify-center hover:bg-gray-100 transition"
+            style={{ marginLeft: "20%" }}
+            onClick={() => navigate("/lists")}
+            aria-label="뒤로가기"
+            type="button"
+        >
+            {'<'}
+        </button>
+    );
 }
