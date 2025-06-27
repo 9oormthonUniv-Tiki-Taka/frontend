@@ -12,45 +12,24 @@ type QuestionStatus = "전체" | "미응답" | "응답 완료";
 const initialQuestions: Array<{
     id: number;
     content: string;
-    date: string;
+    CREATED_AT: string;
     status: string;
     answers: string[];
 }> = [
     {
         id: 1,
         content: "질문 내용: 질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용...",
-        date: "2025.00.00",
+        CREATED_AT: "2025.00.00",
         status: "미응답",
         answers: [],
     },
     {
         id: 2,
         content: "질문 내용: 질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용...",
-        date: "2025.00.00",
+        CREATED_AT: "2025.00.00",
         status: "응답 완료",
         answers: [],
-    },
-    {
-        id: 3,
-        content: "질문 내용: 질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용...",
-        date: "2025.00.00",
-        status: "응답 완료",
-        answers: [],
-    },
-    {
-        id: 4,
-        content: "질문 내용: 질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용...",
-        date: "2025.00.00",
-        status: "미응답",
-        answers: [],
-    },
-    {
-        id: 5,
-        content: "질문 내용: 질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용질문내용...",
-        date: "2025.00.00",
-        status: "응답 완료",
-        answers: [],
-    },
+    }
 ];
 
 export function QAProfessor() {

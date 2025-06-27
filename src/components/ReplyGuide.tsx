@@ -27,8 +27,8 @@ export default function ReplyGuide({ open, onClose, questionContents, questionID
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async () => {
-    const lectureId = 100;
-    const questionIDs = ["1", "2", "3"];
+    const lectureId = 1;
+    const questionIDs = ["1", "2"];
     
     if (!replyText.trim()) {
       alert("응답 내용을 입력해주세요.");
@@ -49,10 +49,11 @@ export default function ReplyGuide({ open, onClose, questionContents, questionID
 
     try {
       // 일괄응답 API 호출
-      const response = await fetch(`https://api.tikitaka.o-r.kr/api/lecture/questions?lectureId=${lectureId}`, {
+      const response = await fetch(`https://api.tikitaka.o-r.kr/api/lectures/{lectureId}/questions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization' : 'Bearer ' + localStorage.getItem('Authorization'),
         },
         body: JSON.stringify({
           questionIDs: questionIDs,

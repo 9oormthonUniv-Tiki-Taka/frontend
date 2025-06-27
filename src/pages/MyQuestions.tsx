@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+// import React from 'react'; // 사용하지 않으므로 주석 처리
+import { useState } from "react";
 
 const MyQuestions = () => {
   const [currentPage, setCurrentPage] = useState(1);

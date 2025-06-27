@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+// import React from 'react'; // 사용하지 않으므로 주석 처리
+import { useState } from "react";
 
 const MyReactions = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [activeTab, setActiveTab] = useState("전체");
   const [showModal, setShowModal] = useState(false);
-  const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
 
   const pages = [1, 2, 3, 4, 5];
   const tabs = ["전체", "좋아요", "궁금해요"];
@@ -16,14 +16,12 @@ const MyReactions = () => {
     { category: "강의 이름", content: "질문 내용" },
   ];
 
-  const handleDeleteClick = (index: number) => {
-    setDeleteIndex(index);
+  const handleDeleteClick = () => {
     setShowModal(true);
   };
 
   const handleConfirmDelete = () => {
     setShowModal(false);
-    setDeleteIndex(null);
   };
 
   return (
@@ -59,7 +57,7 @@ const MyReactions = () => {
                   {item.content}
                 </p>
                 <button
-                  onClick={() => handleDeleteClick(index)}
+                  onClick={() => handleDeleteClick()}
                   className="absolute top-0 right-0 text-gray-400 hover:text-red-400"
                 >
                   ✕
