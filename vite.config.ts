@@ -12,4 +12,8 @@ export default defineConfig({
 			"@": path.resolve(__dirname, "src"), // 이 부분 추가!
 		},
 	},
+	define: {
+		'process.env.VITE_GOOGLE_AUTH_CLIENT_ID': JSON.stringify(process.env.VITE_GOOGLE_AUTH_CLIENT_ID || 'your-google-client-id'),
+		'process.env.VITE_GOOGLE_AUTH_REDIRECT_URI': JSON.stringify(process.env.VITE_GOOGLE_AUTH_REDIRECT_URI || 'http://localhost:5174/oauth/callback'),
+	},
 });
