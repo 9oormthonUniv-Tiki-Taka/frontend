@@ -65,7 +65,13 @@ export default function LiveProfessor() {
 
     const fetchQuestions = async () => {
         try {
-            const res = await fetch(`http://localhost:3001/api/lectures/${lectureId}/live/questions`);
+            const res = await fetch(`https://api.tikitaka.o-r.kr/api/lectures/${lectureId}/live/questions`, {
+                credentials: 'include',
+                headers: {
+                    'accept': '*/*',
+                    'Authorization': 'Bearer ' + localStorage.getItem('Authorization'),
+                }
+            });
             const data = await res.json();
             if (Array.isArray(data.questions)) {
                 setQAs(data.questions.map(mapApiToQAItem));
@@ -78,7 +84,7 @@ export default function LiveProfessor() {
     const handleSendAnswer = () => {
         if (!answerInput.trim() || !selectedQuestionId) return
 
-        const ws = new WebSocket(`ws://localhost:3001/api/lectures/${lectureId}/live`);
+        const ws = new WebSocket(`ws://api.tikitaka.o-r.kr/api/lectures/${lectureId}/live`);
         ws.onopen = () => {
             ws.send(JSON.stringify({
                 type: "answer",
@@ -99,7 +105,7 @@ export default function LiveProfessor() {
 
     const handleToggleAward = (id: string) => {
         setQAs((prev) => prev.map((qa) => (qa.id === id ? { ...qa, awarded: !qa.awarded } : qa)));
-        const ws = new WebSocket(`ws://localhost:3001/api/lectures/${lectureId}/live`);
+        const ws = new WebSocket(`ws://api.tikitaka.o-r.kr/api/lectures/${lectureId}/live`);
         ws.onopen = () => {
             ws.send(JSON.stringify({
                 type: "medal",

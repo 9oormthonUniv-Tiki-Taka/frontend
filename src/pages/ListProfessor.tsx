@@ -23,7 +23,13 @@ export default function ListProfessor() {
   const [lectures, setLectures] = useState<{ id: string; name: string; room: string; status: "많음" | "보통" | "적음" }[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:3001/api/lectures")
+    fetch("https://api.tikitaka.o-r.kr/api/lectures", {
+      credentials: 'include',
+      headers: {
+        'accept': '*/*',
+        'Authorization': 'Bearer ' + localStorage.getItem('Authorization'),
+      }
+    })
       .then((res) => res.json())
       .then((data) => setLectures(data.lectures || []))
       .catch(() => setLectures([]));
@@ -37,7 +43,7 @@ export default function ListProfessor() {
         <div className="w-full max-w-[1000px] px-4 py-10">
           {/* 제목 */}
           <h1 className="text-2xl font-bold text-center text-[#202325] mb-4">나의 강의 리스트</h1>
-<p className="text-base text-center text-[#555] mb-10">담당 중인 강의를 확인하고 질문을 관리해보세요.</p>
+          <p className="text-base text-center text-[#555] mb-10">담당 중인 강의를 확인하고 질문을 관리해보세요.</p>
 
 
           {/* 검색창 */}
@@ -94,11 +100,10 @@ export default function ListProfessor() {
               {filters.map((f) => (
                 <button
                   key={f.id}
-                  className={`text-sm px-4 py-2 rounded-full transition-colors ${
-                    selectedFilter === f.id
-                      ? "bg-[#646B72] text-white"
-                      : "bg-[#F2F6F9] text-[#323639] hover:bg-[#E9EEF2]"
-                  }`}
+                  className={`text-sm px-4 py-2 rounded-full transition-colors ${selectedFilter === f.id
+                    ? "bg-[#646B72] text-white"
+                    : "bg-[#F2F6F9] text-[#323639] hover:bg-[#E9EEF2]"
+                    }`}
                   onClick={() => setSelectedFilter(f.id)}
                 >
                   {f.label}
