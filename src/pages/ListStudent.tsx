@@ -24,7 +24,14 @@ export default function ListStudent() {
       }
     })
       .then((res) => res.json())
-      .then((data) => setLectures(data.lectures || []))
+      .then((data) =>
+        setLectures(
+          (data.allLectures || []).map((lecture: any) => ({
+            ...lecture,
+            status: "보통", // 필요시 다른 값으로 매핑
+          }))
+        )
+      )
       .catch(() => setLectures([]));
   }, []);
 

@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
+import { Client } from "@stomp/stompjs"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -57,6 +58,27 @@ export default function LiveProfessor() {
     const [reportModalOpen, setReportModalOpen] = useState(false)
     const [flagTargetId, setFlagTargetId] = useState<string | null>(null)
 
+    // stomp 클라이언트 ref
+    const stompClientRef = useRef<Client | null>(null);
+
+    // stomp 클라이언트 생성 및 연결 함수
+    const getStompClient = () => {
+        if (stompClientRef.current && stompClientRef.current.connected) {
+            return stompClientRef.current;
+        }
+        const client = new Client({
+            brokerURL: `wss://api.tikitaka.o-r.kr/api/lectures/${lectureId}/live`,
+            connectHeaders: {
+                Authorization: 'Bearer ' + localStorage.getItem('Authorization') || "",
+            },
+            debug: () => { },
+            reconnectDelay: 0,
+        });
+        client.activate();
+        stompClientRef.current = client;
+        return client;
+    };
+
     useEffect(() => {
         fetchQuestions();
     }, [])
@@ -86,19 +108,24 @@ export default function LiveProfessor() {
     const handleSendAnswer = () => {
         if (!answerInput.trim() || !selectedQuestionId) return
 
-        const ws = new WebSocket(`ws://api.tikitaka.o-r.kr/api/lectures/${lectureId}/live`);
-        ws.onopen = () => {
-            ws.send(JSON.stringify({
-                type: "answer",
-                request: {
-                    questionId: selectedQuestionId,
-                    content: answerInput
-                }
-            }));
-            ws.close();
-        };
-        ws.onclose = () => {
-            fetchQuestions();
+
+        const client = getStompClient();
+        client.onConnect = () => {
+            client.publish({
+                destination: "/app/live",
+                body: JSON.stringify({
+                    type: "answer",
+                    request: {
+                        questionId: selectedQuestionId,
+                        content: answerInput
+                    }
+                }),
+            });
+            setTimeout(() => {
+                client.deactivate();
+                fetchQuestions();
+            }, 200);
+
         };
 
         setAnswerInput("")
@@ -107,17 +134,23 @@ export default function LiveProfessor() {
 
     const handleToggleAward = (id: string) => {
         setQAs((prev) => prev.map((qa) => (qa.id === id ? { ...qa, awarded: !qa.awarded } : qa)));
-        const ws = new WebSocket(`ws://api.tikitaka.o-r.kr/api/lectures/${lectureId}/live`);
-        ws.onopen = () => {
-            ws.send(JSON.stringify({
-                type: "medal",
-                request: {
-                    questionId: id,
+        const client = getStompClient();
+        client.onConnect = () => {
+            client.publish({
+                destination: "/app/live",
+                body: JSON.stringify({
+
                     type: "medal",
-                    amount: "gold"
-                }
-            }));
-            ws.close();
+                    request: {
+                        questionId: id,
+                        type: "medal",
+                        amount: "gold"
+                    }
+                }),
+            });
+            setTimeout(() => {
+                client.deactivate();
+            }, 200);
         };
     }
 

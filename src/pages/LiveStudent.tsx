@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
+import { Client } from "@stomp/stompjs"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -67,6 +68,28 @@ export default function LiveStudent() {
     const params = new URLSearchParams(window.location.search);
     const lectureName = params.get("name") ?? ""
 
+    // stomp 클라이언트 ref
+    const stompClientRef = useRef<Client | null>(null);
+
+    // stomp 클라이언트 생성 및 연결 함수
+    const getStompClient = () => {
+        if (stompClientRef.current && stompClientRef.current.connected) {
+            return stompClientRef.current;
+        }
+        const client = new Client({
+            brokerURL: `wss://api.tikitaka.o-r.kr/api/lectures/${lectureId}/live`,
+            connectHeaders: {
+                Authorization: 'Bearer ' + localStorage.getItem('Authorization') || "",
+            },
+            debug: () => { },
+            reconnectDelay: 0,
+        });
+        client.activate();
+        stompClientRef.current = client;
+        return client;
+    };
+
+
     const fetchQuestions = async () => {
         try {
             const res = await fetch(`https://api.tikitaka.o-r.kr/api/lectures/${lectureId}/live/questions`, {
@@ -109,7 +132,6 @@ export default function LiveStudent() {
                     : qa
             )
         );
-        // 최신 상태를 기반으로 전송
         setTimeout(() => {
             const updated = qas.find((qa) => qa.id === id);
             const isLiked = updated?.liked ?? false;
@@ -121,20 +143,23 @@ export default function LiveStudent() {
 
             console.log(`like 클릭: id=${id}, liked(이전)=${isLiked}, liked(다음)=${newLiked}, likeCount(전송)=${newLikeCount}`);
 
-            const ws = new WebSocket(`ws://api.tikitaka.o-r.kr/api/lectures/${lectureId}/live`);
-            ws.onopen = () => {
-                ws.send(JSON.stringify({
-                    type: "like",
-                    request: {
-                        questionId: id,
-                        type: "",
-                        amount: newLikeCount
-                    }
-                }));
-                ws.close();
-            };
-            ws.onclose = () => {
-                fetchQuestions();
+            const client = getStompClient();
+            client.onConnect = () => {
+                client.publish({
+                    destination: "/app/live",
+                    body: JSON.stringify({
+                        type: "like",
+                        request: {
+                            questionId: id,
+                            type: "",
+                            amount: newLikeCount
+                        }
+                    }),
+                });
+                setTimeout(() => {
+                    client.deactivate();
+                    fetchQuestions();
+                }, 200);
             };
         }, 0);
     }
@@ -164,20 +189,23 @@ export default function LiveStudent() {
 
             console.log(`wonder 클릭: id=${id}, curious(이전)=${isCurious}, curious(다음)=${newCurious}, curiousCount(전송)=${newCuriousCount}`);
 
-            const ws = new WebSocket(`ws://api.tikitaka.o-r.kr/api/lectures/${lectureId}/live`);
-            ws.onopen = () => {
-                ws.send(JSON.stringify({
-                    type: "wonder",
-                    request: {
-                        questionId: id,
-                        type: "",
-                        amount: newCuriousCount
-                    }
-                }));
-                ws.close();
-            };
-            ws.onclose = () => {
-                fetchQuestions();
+            const client = getStompClient();
+            client.onConnect = () => {
+                client.publish({
+                    destination: "/app/live",
+                    body: JSON.stringify({
+                        type: "wonder",
+                        request: {
+                            questionId: id,
+                            type: "",
+                            amount: newCuriousCount
+                        }
+                    }),
+                });
+                setTimeout(() => {
+                    client.deactivate();
+                    fetchQuestions();
+                }, 200);
             };
         }, 0);
     }
@@ -205,16 +233,21 @@ export default function LiveStudent() {
                 prev.map((qa) => (qa.id === selectedQuestionId ? { ...qa, question: answerInput } : qa))
             )
         } else {
-            const ws = new WebSocket(`ws://api.tikitaka.o-r.kr/api/lectures/${lectureId}/live`);
-            ws.onopen = () => {
-                ws.send(JSON.stringify({
-                    type: "question",
-                    request: {
-                        content: answerInput
-                    }
-                }));
-                ws.close();
-                fetchQuestions();
+            const client = getStompClient();
+            client.onConnect = () => {
+                client.publish({
+                    destination: "/app/live",
+                    body: JSON.stringify({
+                        type: "question",
+                        request: {
+                            content: answerInput
+                        }
+                    }),
+                });
+                setTimeout(() => {
+                    client.deactivate();
+                    fetchQuestions();
+                }, 200);
             };
         }
 
