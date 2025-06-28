@@ -1,9 +1,9 @@
-import { useState } from "react";
-import { Search, Calendar } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useState, useEffect } from "react";
+import { Calendar, ChevronDown, ChevronRight, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 const filters = [
   { id: 0, label: "최신 등록 순" },
@@ -20,103 +20,118 @@ const questions = [
 export default function ListProfessor() {
   const [selectedFilter, setSelectedFilter] = useState(1);
   const [selectedQuestion, setSelectedQuestion] = useState<number | null>(null);
+  const [lectures, setLectures] = useState<{ id: string; name: string; room: string; status: "많음" | "보통" | "적음" }[]>([]);
+
+  useEffect(() => {
+    fetch("http://localhost:3001/api/lectures")
+      .then((res) => res.json())
+      .then((data) => setLectures(data.lectures || []))
+      .catch(() => setLectures([]));
+  }, []);
 
   return (
-    <div className="min-h-screen bg-[#F8FBFF] px-4 sm:px-6 md:px-8 py-8 sm:py-10">
-      {/* 제목 */}
-      <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-center text-[#202325] mb-4">
-        나의 강의 리스트
-      </h1>
-      <p className="text-sm sm:text-base text-center text-[#555] mb-6">
-        담당 중인 강의를 확인하고 질문을 관리해보세요.
-      </p>
+    <div className="absolute top-0 left-0 w-full min-h-screen flex flex-col bg-[#F8FBFF]">
+      <Header />
 
-      {/* 검색창 */}
-      <div className="relative w-full max-w-xl mb-14 mx-auto">
-        <Input
-          type="text"
-          placeholder="강의명을 입력하세요..."
-          className="w-full pl-5 pr-12 py-3 bg-[#FFFFFF] sm:py-4 md:py-5 text-sm sm:text-base md:text-lg rounded-full border border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400"
-        />
-        <Search className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-blue-500" />
-      </div>
+      <main className="flex-1 flex justify-center">
+        <div className="w-full max-w-[1000px] px-4 py-10">
+          {/* 제목 */}
+          <h1 className="text-2xl font-bold text-center text-[#202325] mb-4">나의 강의 리스트</h1>
+<p className="text-base text-center text-[#555] mb-10">담당 중인 강의를 확인하고 질문을 관리해보세요.</p>
 
-      {/* 오늘 강의 */}
-      <div className="mb-12">
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-0 mb-4">
-          <div className="flex items-center text-[#202325] font-semibold text-sm sm:text-base">
-            <Calendar className="w-5 h-5 mr-1" />
-            오늘 강의 (2025.00.00)
+
+          {/* 검색창 */}
+          <div className="relative w-full mb-14">
+            <Input
+              type="text"
+              placeholder="강의명을 입력하세요..."
+              className="w-full bg-white pl-5 pr-12 py-4 text-base rounded-full border border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400"
+            />
+            <Search className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-blue-500" />
           </div>
 
-          {/* 질문 필터 */}
-          <div className="flex flex-wrap gap-3 text-sm text-[#646B72]">
-            {questions.map((q) => (
-              <button
-                key={q.id}
-                onClick={() => setSelectedQuestion(q.id)}
-                className="flex items-center gap-2 focus:outline-none"
-              >
-                <span
-                  className="w-4 h-4 rounded-[4px]"
-                  style={{
-                    backgroundColor: selectedQuestion === q.id ? "#323639" : "#646B72",
-                  }}
+          {/* 오늘 강의 */}
+          <section className="mb-16">
+            <div className="flex items-center flex-wrap gap-2 mb-4">
+              <Calendar className="w-5 h-5 text-gray-500" />
+              <h2 className="text-base font-medium text-gray-800">
+                오늘 강의 (2025.00.00)
+              </h2>
+              <div className="flex flex-wrap gap-3 text-sm text-[#646B72] ml-auto">
+                {questions.map((q) => (
+                  <button
+                    key={q.id}
+                    onClick={() => setSelectedQuestion(q.id)}
+                    className="flex items-center gap-2 focus:outline-none"
+                  >
+                    <span
+                      className="w-4 h-4 rounded-[4px]"
+                      style={{
+                        backgroundColor: selectedQuestion === q.id ? "#323639" : "#646B72",
+                      }}
+                    />
+                    {q.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              {lectures.slice(0, 2).map((lecture, i) => (
+                <HoverCard key={lecture.id || i} lecture={lecture} />
+              ))}
+            </div>
+          </section>
+
+          {/* 전체 강의 */}
+          <div>
+            <div className="flex items-center gap-2 text-[#202325] font-semibold mb-2 text-base">
+              <Calendar className="w-5 h-5" />
+              전체 강의
+            </div>
+
+            <div className="flex flex-wrap gap-2 mb-6">
+              {filters.map((f) => (
+                <button
+                  key={f.id}
+                  className={`text-sm px-4 py-2 rounded-full transition-colors ${
+                    selectedFilter === f.id
+                      ? "bg-[#646B72] text-white"
+                      : "bg-[#F2F6F9] text-[#323639] hover:bg-[#E9EEF2]"
+                  }`}
+                  onClick={() => setSelectedFilter(f.id)}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="space-y-3 mb-6">
+              {lectures.slice(0, 2).map((lecture) => (
+                <LectureCard
+                  key={lecture.id}
+                  name={lecture.name}
+                  room={lecture.room}
+                  status={lecture.status || "보통"}
                 />
-                {q.label}
+              ))}
+            </div>
+
+            <div className="w-full text-center mt-8">
+              <button className="border border-gray-300 px-5 py-2 text-sm rounded-md flex items-center justify-center gap-1 hover:bg-gray-100 mx-auto">
+                <span>더보기</span>
+                <ChevronDown className="w-4 h-4" />
               </button>
-            ))}
+            </div>
           </div>
         </div>
+      </main>
 
-        <div className="space-y-3">
-          <LectureCard name="수업 이름" room="강의실 이름" status="많음" />
-          <LectureCard name="수업 이름" room="강의실 이름" status="많음" />
-        </div>
-      </div>
-
-      {/* 전체 강의 */}
-      <div>
-        <div className="flex items-center gap-2 text-[#202325] font-semibold mb-2 text-sm sm:text-base">
-          <Calendar className="w-5 h-5" />
-          전체 강의
-        </div>
-
-        {/* 정렬 필터 */}
-        <div className="flex flex-wrap gap-2 mb-4">
-          {filters.map((f) => (
-            <button
-              key={f.id}
-              onClick={() => setSelectedFilter(f.id)}
-              className={`px-3 sm:px-4 py-1 text-xs sm:text-sm rounded-md border
-                ${selectedFilter === f.id
-                  ? "bg-[#646B72] text-white border-transparent"
-                  : "text-[#555] border-[#DDE2E5]"}`}
-            >
-              {f.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="space-y-3 mb-6">
-          <LectureCard name="수업 이름" room="강의실 이름" status="많음" />
-          <LectureCard name="수업 이름" room="강의실 이름" status="많음" />
-          <LectureCard name="수업 이름" room="강의실 이름" status="보통" />
-          <LectureCard name="수업 이름" room="강의실 이름" status="보통" />
-          <LectureCard name="수업 이름" room="강의실 이름" status="적음" />
-        </div>
-
-        <div className="flex justify-center">
-          <Button variant="outline" className="rounded-md text-[#555] border-[#D5DDE5]">
-            더보기 ▼
-          </Button>
-        </div>
-      </div>
+      <Footer />
     </div>
   );
 }
 
-// 강의 카드 반응형
 function LectureCard({
   name,
   room,
@@ -132,29 +147,36 @@ function LectureCard({
     적음: "#C8CFD6",
   };
 
-  const navigate = useNavigate(); 
-
-  const handleClick = () => {
-    navigate("/loading"); 
-  };
-
   return (
-    <div
-      onClick={handleClick} 
-      className="cursor-pointer bg-white px-4 sm:px-6 py-3 sm:py-4 rounded-xl flex flex-col sm:flex-row sm:justify-between sm:items-center shadow-sm gap-2 sm:gap-0 hover:bg-[#F2F6F9] transition-colors"
-    >
-      <div className="text-[#202325] font-medium text-sm sm:text-base">
-        {name} <span className="text-xs sm:text-sm text-[#999]">({room})</span>
+    <div className="cursor-pointer bg-white px-4 py-3 rounded-xl flex justify-between items-center shadow-sm hover:bg-[#F2F6F9] transition-colors">
+      <div className="text-[#202325] font-medium text-sm">
+        {name} <span className="text-xs text-[#999]">({room})</span>
       </div>
-      <Badge
+      <span
         style={{
           backgroundColor: colorMap[status],
           color: "#fff",
+          padding: "2px 6px",
+          borderRadius: "4px",
+          fontSize: "12px",
         }}
-        className="text-xs sm:text-sm"
       >
         {status}
-      </Badge>
+      </span>
+    </div>
+  );
+}
+
+function HoverCard({ lecture }: { lecture: { id: string; name: string; room: string } }) {
+  const navigate = useNavigate();
+
+  return (
+    <div
+      onClick={() => navigate(`/lives?id=${lecture.id}`)}
+      className="group flex justify-between items-center bg-white hover:bg-[#E9EEF2] transition-colors rounded-md py-4 px-5 text-sm text-gray-700 border border-gray-200 cursor-pointer"
+    >
+      {lecture.name} ({lecture.room})
+      <ChevronRight className="w-4 h-4 text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity duration-150" />
     </div>
   );
 }
