@@ -108,6 +108,7 @@ export default function LiveProfessor() {
     const handleSendAnswer = () => {
         if (!answerInput.trim() || !selectedQuestionId) return
 
+
         const client = getStompClient();
         client.onConnect = () => {
             client.publish({
@@ -124,6 +125,7 @@ export default function LiveProfessor() {
                 client.deactivate();
                 fetchQuestions();
             }, 200);
+
         };
 
         setAnswerInput("")
@@ -137,6 +139,7 @@ export default function LiveProfessor() {
             client.publish({
                 destination: "/app/live",
                 body: JSON.stringify({
+
                     type: "medal",
                     request: {
                         questionId: id,

@@ -89,6 +89,7 @@ export default function LiveStudent() {
         return client;
     };
 
+
     const fetchQuestions = async () => {
         try {
             const res = await fetch(`https://api.tikitaka.o-r.kr/api/lectures/${lectureId}/live/questions`, {
