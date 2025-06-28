@@ -25,16 +25,25 @@ export default function ListProfessor() {
   >([]);
 
   useEffect(() => {
-    // ✅ Mock data
-    const mockLectures = [
-      { id: "1", name: "자료구조", room: "A101", status: "많음" },
-      { id: "2", name: "운영체제", room: "B202", status: "보통" },
-      { id: "3", name: "컴퓨터구조", room: "C303", status: "적음" },
-      { id: "4", name: "웹프로그래밍", room: "D404", status: "많음" },
-      { id: "5", name: "네트워크", room: "E505", status: "보통" },
-    ];
-    setLectures(mockLectures);
+    fetch("https://api.tikitaka.o-r.kr/api/lectures", {
+      credentials: 'include',
+      headers: {
+        'accept': '*/*',
+        'Authorization': 'Bearer ' + localStorage.getItem('Authorization'),
+      }
+    })
+      .then((res) => res.json())
+      .then((data) =>
+        setLectures(
+          (data.allLectures || []).map((lecture: any) => ({
+            ...lecture,
+            status: "보통", // 필요시 다른 값으로 매핑
+          }))
+        )
+      )
+      .catch(() => setLectures([]));
   }, []);
+
 
   const sortedLectures = useMemo(() => {
     const copied = [...lectures];
