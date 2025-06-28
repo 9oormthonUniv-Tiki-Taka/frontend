@@ -45,20 +45,20 @@ const StudentIdAuth = ({ onAuthResult }: StudentIdAuthProps) => {
   };
 
   const handleComplete = async () => {
-    if (authCode.length < 1 || status !== "codeInput") return;
+    if (authCode.length < 1) return;
     setIsLoading(true);
-    const sub = localStorage.getItem('userSub')
-
+    const sub = localStorage.getItem('userSub');
     try {
-      // 학생 인증 API 호출
-      const response = await fetch(`https://api.tikitaka.o-r.kr/auth/verify?sub=${sub}&code=${authCode}&studentId=${studentId}`, {
-        method: 'POST',
-        headers: {
-          'accept': '*/*',
-          'Content-Type': 'application/json',
-        },
-      });
-
+      const response = await fetch(
+        `https://api.tikitaka.o-r.kr/auth/verify?sub=${encodeURIComponent(sub || '')}&code=${encodeURIComponent(authCode)}&studentId=${encodeURIComponent(studentId)}`,
+        {
+          method: 'POST',
+          headers: {
+            'accept': '*/*',
+            'Content-Type': 'application/json',
+          }
+        }
+      );
       if (response.ok) {
         setStatus("success");
         onAuthResult("success", {
