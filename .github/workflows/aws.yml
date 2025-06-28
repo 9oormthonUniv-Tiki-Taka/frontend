@@ -28,6 +28,6 @@ jobs:
           scp -i key.pem -o StrictHostKeyChecking=no -r \
             dist \
             ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/${{ secrets.SSH_USER }}/frontend
-          sudo cp -r /home/${{ secrets.SSH_USER }}/frontend/dist/* /var/www/html/
+          sudo cp -r /home/${{ secrets.SSH_USER }}/frontend/* /var/www/html/
           sudo chown -R www-data:www-data /var/www/html
           sudo chmod -R 755 /var/www/html
