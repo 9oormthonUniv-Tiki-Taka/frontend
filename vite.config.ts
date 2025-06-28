@@ -14,6 +14,7 @@ export default defineConfig({
 	},
 	define: {
 		'process.env.VITE_GOOGLE_AUTH_CLIENT_ID': JSON.stringify(process.env.VITE_GOOGLE_AUTH_CLIENT_ID || 'your-google-client-id'),
-		'process.env.VITE_GOOGLE_AUTH_REDIRECT_URI': JSON.stringify(process.env.VITE_GOOGLE_AUTH_REDIRECT_URI || 'http://localhost:5174/oauth/callback'),
+		// 'process.env.VITE_GOOGLE_AUTH_REDIRECT_URI': JSON.stringify(process.env.VITE_GOOGLE_AUTH_REDIRECT_URI || 'http://localhost:5174/oauth/callback'),
+		'process.env.VITE_GOOGLE_AUTH_REDIRECT_URI': JSON.stringify(process.env.VITE_GOOGLE_AUTH_REDIRECT_URI || 'https://www.tikitaka.o-r.kr/oauth/callback'),
 	},
 });
