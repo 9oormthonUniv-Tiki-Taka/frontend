@@ -1,4 +1,3 @@
-// src/pages/MyPage.tsx
 import { useState } from "react";
 import MyQuestions from "./MyQuestions";
 import MyComments from "./MyComments";
