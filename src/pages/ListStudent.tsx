@@ -117,7 +117,7 @@ function HoverCard({ lecture }: { lecture: { id: string; name: string; room: str
 
   return (
     <div
-      onClick={() => navigate(`/lives?id=${lecture.id}`)}
+      onClick={() => navigate(`/lives?id=${lecture.id}&name=${encodeURIComponent(lecture.name)}`)}
       className="group flex justify-between items-center bg-white hover:bg-[#E9EEF2] transition-colors rounded-md py-4 px-5 text-sm text-gray-700 border border-gray-200 cursor-pointer"
     >
       {lecture.name} ({lecture.room})

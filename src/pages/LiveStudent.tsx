@@ -64,6 +64,8 @@ export default function LiveStudent() {
     const [answerInput, setAnswerInput] = useState("")
     const [selectedQuestionId, setSelectedQuestionId] = useState<string | null>(null)
     const [reportModalOpen, setReportModalOpen] = useState(false)
+    const params = new URLSearchParams(window.location.search);
+    const lectureName = params.get("name") ?? ""
 
     const fetchQuestions = async () => {
         try {
@@ -224,7 +226,7 @@ export default function LiveStudent() {
         <div className="absolute top-0 left-0 w-full min-h-screen flex flex-col bg-[#F2F6F9]">
             <Header />
             {/* 뒤로가기 버튼 */}
-            <BackButton />
+            <BackButton name={lectureName} />
             <main className="w-full flex-1 flex justify-center">
                 <div className="w-full max-w-[1000px] px-4">
                     {qas.length === 0 ? (
@@ -387,7 +389,7 @@ export default function LiveStudent() {
     )
 }
 
-function BackButton() {
+function BackButton({ name }: { name?: string }) {
     const navigate = useNavigate();
     return (
         <button
@@ -397,7 +399,7 @@ function BackButton() {
             aria-label="뒤로가기"
             type="button"
         >
-            {'<'}
+            {'<'}{name && <span style={{ marginLeft: 8 }}>{name}</span>}
         </button>
     );
 }
