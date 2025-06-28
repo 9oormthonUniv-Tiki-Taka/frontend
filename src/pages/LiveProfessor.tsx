@@ -65,7 +65,13 @@ export default function LiveProfessor() {
 
     const fetchQuestions = async () => {
         try {
-            const res = await fetch(`https://api.tikitaka.o-r.kr/api/lectures/${lectureId}/live/questions`);
+            const res = await fetch(`https://api.tikitaka.o-r.kr/api/lectures/${lectureId}/live/questions`, {
+                credentials: 'include',
+                headers: {
+                    'accept': '*/*',
+                    'Authorization': 'Bearer ' + localStorage.getItem('Authorization'),
+                }
+            });
             const data = await res.json();
             if (Array.isArray(data.questions)) {
                 setQAs(data.questions.map(mapApiToQAItem));

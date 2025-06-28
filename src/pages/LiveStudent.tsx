@@ -67,7 +67,13 @@ export default function LiveStudent() {
 
     const fetchQuestions = async () => {
         try {
-            const res = await fetch(`https://api.tikitaka.o-r.kr/api/lectures/${lectureId}/live/questions`);
+            const res = await fetch(`https://api.tikitaka.o-r.kr/api/lectures/${lectureId}/live/questions`, {
+                credentials: 'include',
+                headers: {
+                    'accept': '*/*',
+                    'Authorization': 'Bearer ' + localStorage.getItem('Authorization'),
+                }
+            });
             const data = await res.json();
             console.log("질문 데이터:", data);
             if (Array.isArray(data.questions)) {

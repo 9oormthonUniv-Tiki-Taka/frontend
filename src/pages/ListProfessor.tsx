@@ -23,7 +23,13 @@ export default function ListProfessor() {
   const [lectures, setLectures] = useState<{ id: string; name: string; room: string; status: "많음" | "보통" | "적음" }[]>([]);
 
   useEffect(() => {
-    fetch("https://api.tikitaka.o-r.kr/api/lectures")
+    fetch("https://api.tikitaka.o-r.kr/api/lectures", {
+      credentials: 'include',
+      headers: {
+        'accept': '*/*',
+        'Authorization': 'Bearer ' + localStorage.getItem('Authorization'),
+      }
+    })
       .then((res) => res.json())
       .then((data) => setLectures(data.lectures || []))
       .catch(() => setLectures([]));
@@ -95,8 +101,8 @@ export default function ListProfessor() {
                 <button
                   key={f.id}
                   className={`text-sm px-4 py-2 rounded-full transition-colors ${selectedFilter === f.id
-                      ? "bg-[#646B72] text-white"
-                      : "bg-[#F2F6F9] text-[#323639] hover:bg-[#E9EEF2]"
+                    ? "bg-[#646B72] text-white"
+                    : "bg-[#F2F6F9] text-[#323639] hover:bg-[#E9EEF2]"
                     }`}
                   onClick={() => setSelectedFilter(f.id)}
                 >
