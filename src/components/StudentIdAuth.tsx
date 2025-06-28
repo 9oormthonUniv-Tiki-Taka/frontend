@@ -124,10 +124,7 @@ const StudentIdAuth = ({ onAuthResult }: StudentIdAuthProps) => {
             type="text"
             placeholder="인증번호 입력"
             value={authCode}
-            onChange={e => {
-              if (status === "codeInput") setAuthCode(e.target.value);
-            }}
-            readOnly={status !== "codeInput"}
+            onChange={e => setAuthCode(e.target.value)}
             onFocus={() => setAuthCodeFocus(true)}
             onBlur={() => setAuthCodeFocus(false)}
             className={`w-full h-[70px] border-2 ${authCodeBorder} rounded-xl px-4 py-3 outline-none bg-white cursor-pointer`}
