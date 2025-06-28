@@ -1,4 +1,4 @@
-name: Build and Deploy to EC2
+name: Build and Deploy React to EC2
 
 on:
   push:
@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: ✅ Checkout Repository
         uses: actions/checkout@v3
-        
+
       - name: 🧱 Install & Build React App
         run: |
           npm ci
@@ -23,15 +23,19 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > key.pem
           chmod 400 key.pem
 
-      - name: 🚀 SCP React dist/ to EC2
+      - name: 📦 SCP dist/* to EC2 /tmp/react-deploy/
         run: |
+          ssh -i key.pem -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "mkdir -p /tmp/react-deploy"
           scp -i key.pem -o StrictHostKeyChecking=no -r \
-            dist \
-            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/${{ secrets.SSH_USER }}/frontend
+            dist/* \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/tmp/react-deploy/
 
-      - name: SSH Setting
+      - name: 🚀 Deploy to /var/www/html
         run: |
-          ssh -i key.pem -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}
-          sudo cp -r /home/${{ secrets.SSH_USER }}/frontend/* /var/www/html/
-          sudo chown -R www-data:www-data /var/www/html
-          sudo chmod -R 755 /var/www/html
+          ssh -i key.pem -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << EOF
+            sudo rm -rf /var/www/html/*
+            sudo cp -r /tmp/react-deploy/* /var/www/html/
+            sudo chown -R www-data:www-data /var/www/html
+            sudo chmod -R 755 /var/www/html
+            echo "✅ React deployed to /var/www/html!"
+          EOF
