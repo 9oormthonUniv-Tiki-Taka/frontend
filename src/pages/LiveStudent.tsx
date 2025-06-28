@@ -121,7 +121,7 @@ export default function LiveStudent() {
 
             console.log(`like 클릭: id=${id}, liked(이전)=${isLiked}, liked(다음)=${newLiked}, likeCount(전송)=${newLikeCount}`);
 
-            const ws = new WebSocket(`ws://api.tikitaka.o-r.kr/api/lectures/${lectureId}/live`);
+            const ws = new WebSocket(`wss://api.tikitaka.o-r.kr/api/lectures/${lectureId}/live`);
             ws.onopen = () => {
                 ws.send(JSON.stringify({
                     type: "like",
@@ -164,7 +164,7 @@ export default function LiveStudent() {
 
             console.log(`wonder 클릭: id=${id}, curious(이전)=${isCurious}, curious(다음)=${newCurious}, curiousCount(전송)=${newCuriousCount}`);
 
-            const ws = new WebSocket(`ws://api.tikitaka.o-r.kr/api/lectures/${lectureId}/live`);
+            const ws = new WebSocket(`wss://api.tikitaka.o-r.kr/api/lectures/${lectureId}/live`);
             ws.onopen = () => {
                 ws.send(JSON.stringify({
                     type: "wonder",
@@ -205,7 +205,7 @@ export default function LiveStudent() {
                 prev.map((qa) => (qa.id === selectedQuestionId ? { ...qa, question: answerInput } : qa))
             )
         } else {
-            const ws = new WebSocket(`ws://api.tikitaka.o-r.kr/api/lectures/${lectureId}/live`);
+            const ws = new WebSocket(`wss://api.tikitaka.o-r.kr/api/lectures/${lectureId}/live`);
             ws.onopen = () => {
                 ws.send(JSON.stringify({
                     type: "question",

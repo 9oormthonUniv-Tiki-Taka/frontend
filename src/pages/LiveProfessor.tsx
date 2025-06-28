@@ -86,7 +86,7 @@ export default function LiveProfessor() {
     const handleSendAnswer = () => {
         if (!answerInput.trim() || !selectedQuestionId) return
 
-        const ws = new WebSocket(`ws://api.tikitaka.o-r.kr/api/lectures/${lectureId}/live`);
+        const ws = new WebSocket(`wss://api.tikitaka.o-r.kr/api/lectures/${lectureId}/live`);
         ws.onopen = () => {
             ws.send(JSON.stringify({
                 type: "answer",
@@ -107,7 +107,7 @@ export default function LiveProfessor() {
 
     const handleToggleAward = (id: string) => {
         setQAs((prev) => prev.map((qa) => (qa.id === id ? { ...qa, awarded: !qa.awarded } : qa)));
-        const ws = new WebSocket(`ws://api.tikitaka.o-r.kr/api/lectures/${lectureId}/live`);
+        const ws = new WebSocket(`wss://api.tikitaka.o-r.kr/api/lectures/${lectureId}/live`);
         ws.onopen = () => {
             ws.send(JSON.stringify({
                 type: "medal",
