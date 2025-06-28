@@ -2,8 +2,6 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 // import StudentIdAuth from "@/components/StudentIdAuth";
 
-const API_BASE_URL = 'http://localhost:8080';
-
 export function OAuthCallback() {
   const navigate = useNavigate();
 
@@ -25,7 +23,7 @@ export function OAuthCallback() {
         localStorage.setItem('userSub', sub);
         
         // 메인 페이지로 리다이렉트
-        navigate('/');
+        navigate('/qp');
         
       } 
       else if (message === 'need_verification' && sub) {

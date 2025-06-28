@@ -2,11 +2,11 @@ import { useState, useEffect } from "react";
 import StudentIdAuth from "../components/StudentIdAuth";
 import { Dialog, DialogContent } from "../components/ui/dialog";
 import { CircleCheck, XCircle } from "lucide-react";
-import { useLocation, Navigate, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const VAPID_PUBLIC_KEY = "BPLBsiS3Q-aqnk1QB9Y5H6ZcOySv0evIVqDXwDLW18Or0sEPFQUYGZfeBTmWAzTUI9xruBM5rvxizshLpp8mxVY";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://api.tikitaka.o-r.kr';
+const API_BASE_URL = 'https://api.tikitaka.o-r.kr';
 
 function urlBase64ToUint8Array(base64String: string) {
     const padding = '='.repeat((4 - base64String.length % 4) % 4);
@@ -104,9 +104,7 @@ export function MainLogin() {
     const handleSubmit = async () => {
         if (!email || status === "success" || status === "existing_user") return;
 
-        window.location.href = "http://localhost:8080/login";
-        // 이메일이 입력되면 StudentIdAuth 모달을 열기
-        //setShowAuthModal(true);
+        window.location.href = "https://api.tikitaka.o-r.kr/login";
     };
 
     const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -116,22 +114,23 @@ export function MainLogin() {
     };
 
     // StudentIdAuth에서 인증 결과를 받아 처리
-    const handleAuthResult = async (result: "success" | "error" | "existing_user", authInfo?: { sub: string; code: string; studentId: string }) => {
+    const handleAuthResult = async (
+        result: "success" | "error" | "existing_user",
+        authInfo?: { sub: string; code: string; studentId: string }
+    ) => {
         if (result === "success" && authInfo) {
             try {
-                // 학생 인증 API 호출 - authInfo.sub 사용
-                const response = await fetch('https://api.tikitaka.o-r.kr/auth/verify', {
-                    method: 'POST',
-                    headers: {
-                        'accept': '*/*',
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        sub: authInfo.sub,
-                        code: authInfo.code,
-                        studentId: authInfo.studentId
-                    })
-                });
+                const { sub, code, studentId } = authInfo;
+                const response = await fetch(
+                    `https://api.tikitaka.o-r.kr/auth/verify?sub=${encodeURIComponent(sub)}&code=${encodeURIComponent(code)}&studentId=${encodeURIComponent(studentId)}`,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'accept': '*/*',
+                            'Content-Type': 'application/json',
+                        }
+                    }
+                );
 
                 if (response.ok) {
                     setShowAuthModal(false);

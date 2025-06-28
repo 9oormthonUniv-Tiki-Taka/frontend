@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 
 interface StudentIdAuthProps {
   onAuthResult: (result: "success" | "error" | "existing_user", authInfo?: { sub: string; code: string; studentId: string }) => void;
@@ -13,7 +13,6 @@ const StudentIdAuth = ({ onAuthResult }: StudentIdAuthProps) => {
   const [studentIdFocus, setStudentIdFocus] = useState(false);
   const [authCodeFocus, setAuthCodeFocus] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [pendingStudentId, setPendingStudentId] = useState<string | null>(null);
   const authCodeInputRef = useRef<HTMLInputElement>(null);
 
   const handleRequestAuth = async () => {
@@ -30,13 +29,14 @@ const StudentIdAuth = ({ onAuthResult }: StudentIdAuthProps) => {
         onAuthResult("error");
         return;
       }
-      const response = await fetch(`http://localhost:8080/auth/code?sub=${sub}&studentId=${studentId}`, {
+      await fetch(`https://api.tikitaka.o-r.kr/auth/code?sub=${sub}&studentId=${studentId}`, {
         method: 'POST',
         headers: {
           'accept': '*/*',
           'Content-Type': 'application/json',
         },
-      }).then(() => setIsLoading(false));
+      });
+      setIsLoading(false);
     } catch (error) {
       console.error('코드 수령 실패:', error);
       setIsLoading(false);
