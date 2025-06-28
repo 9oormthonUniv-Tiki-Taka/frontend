@@ -65,7 +65,7 @@ export default function LiveProfessor() {
 
     const fetchQuestions = async () => {
         try {
-            const res = await fetch(`http://api.tikitaka.o-r.kr/api/lectures/${lectureId}/live/questions`, {
+            const res = await fetch(`https://api.tikitaka.o-r.kr/api/lectures/${lectureId}/live/questions`, {
                 credentials: 'include',
                 headers: {
                     'accept': '*/*',
