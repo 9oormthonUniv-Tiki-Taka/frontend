@@ -136,7 +136,7 @@ const StudentIdAuth = ({ onAuthResult }: StudentIdAuthProps) => {
         <button
           type="button"
           onClick={handleComplete}
-          disabled={authCode.length < 1 || status !== "codeInput" || isLoading}
+          disabled={authCode.length < 1 || isLoading}
           className="w-[400px] h-[40px] py-3 rounded-xl text-white bg-[#C8CFD6] disabled:bg-[#C8CFD6] enabled:bg-[#3B6CFF] transition-colors flex items-center justify-center text-center"
         >
           {isLoading ? "인증 중..." : "사용자 인증 완료"}
