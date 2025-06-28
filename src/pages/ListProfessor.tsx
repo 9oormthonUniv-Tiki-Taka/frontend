@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Calendar, ChevronDown, ChevronRight, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
@@ -20,7 +20,9 @@ const questions = [
 export default function ListProfessor() {
   const [selectedFilter, setSelectedFilter] = useState(1);
   const [selectedQuestion, setSelectedQuestion] = useState<number | null>(null);
-  const [lectures, setLectures] = useState<{ id: string; name: string; room: string; status: "많음" | "보통" | "적음" }[]>([]);
+  const [lectures, setLectures] = useState<
+    { id: string; name: string; room: string; status: "많음" | "보통" | "적음" }[]
+  >([]);
 
   useEffect(() => {
     fetch("https://api.tikitaka.o-r.kr/api/lectures", {
@@ -42,6 +44,22 @@ export default function ListProfessor() {
       .catch(() => setLectures([]));
   }, []);
 
+
+  const sortedLectures = useMemo(() => {
+    const copied = [...lectures];
+    switch (selectedFilter) {
+      case 0: // 최신 등록 순
+        return copied.sort((a, b) => Number(b.id) - Number(a.id));
+      case 1: // 질문 많은 순
+        const rank = { 많음: 0, 보통: 1, 적음: 2 };
+        return copied.sort((a, b) => rank[a.status] - rank[b.status]);
+      case 2: // 이름 가나다순
+        return copied.sort((a, b) => a.name.localeCompare(b.name, "ko"));
+      default:
+        return copied;
+    }
+  }, [lectures, selectedFilter]);
+
   return (
     <div className="absolute top-0 left-0 w-full min-h-screen flex flex-col bg-[#F8FBFF]">
       <Header />
@@ -50,8 +68,9 @@ export default function ListProfessor() {
         <div className="w-full max-w-[1000px] px-4 py-10">
           {/* 제목 */}
           <h1 className="text-2xl font-bold text-center text-[#202325] mb-4">나의 강의 리스트</h1>
-          <p className="text-base text-center text-[#555] mb-10">담당 중인 강의를 확인하고 질문을 관리해보세요.</p>
-
+          <p className="text-base text-center text-[#555] mb-10">
+            담당 중인 강의를 확인하고 질문을 관리해보세요.
+          </p>
 
           {/* 검색창 */}
           <div className="relative w-full mb-14">
@@ -80,7 +99,8 @@ export default function ListProfessor() {
                     <span
                       className="w-4 h-4 rounded-[4px]"
                       style={{
-                        backgroundColor: selectedQuestion === q.id ? "#323639" : "#646B72",
+                        backgroundColor:
+                          selectedQuestion === q.id ? "#323639" : "#646B72",
                       }}
                     />
                     {q.label}
@@ -90,7 +110,7 @@ export default function ListProfessor() {
             </div>
 
             <div className="space-y-3">
-              {lectures.slice(0, 2).map((lecture, i) => (
+              {sortedLectures.slice(0, 2).map((lecture, i) => (
                 <HoverCard key={lecture.id || i} lecture={lecture} />
               ))}
             </div>
@@ -107,10 +127,11 @@ export default function ListProfessor() {
               {filters.map((f) => (
                 <button
                   key={f.id}
-                  className={`text-sm px-4 py-2 rounded-full transition-colors ${selectedFilter === f.id
-                    ? "bg-[#646B72] text-white"
-                    : "bg-[#F2F6F9] text-[#323639] hover:bg-[#E9EEF2]"
-                    }`}
+                  className={`text-sm px-4 py-2 rounded-full transition-colors ${
+                    selectedFilter === f.id
+                      ? "bg-[#646B72] text-white"
+                      : "bg-[#F2F6F9] text-[#323639] hover:bg-[#E9EEF2]"
+                  }`}
                   onClick={() => setSelectedFilter(f.id)}
                 >
                   {f.label}
@@ -119,7 +140,7 @@ export default function ListProfessor() {
             </div>
 
             <div className="space-y-3 mb-6">
-              {lectures.slice(0, 2).map((lecture) => (
+              {sortedLectures.map((lecture) => (
                 <LectureCard
                   key={lecture.id}
                   name={lecture.name}
