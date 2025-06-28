@@ -19,7 +19,9 @@ interface QAItem {
     flaged?: boolean
 }
 
-const lectureId = "1"
+const params = new URLSearchParams(window.location.search);
+const lectureId = params.get("id") ?? "1";
+const lectureName = params.get("name") ?? "";
 
 interface ApiQA {
     id: string;
@@ -138,7 +140,7 @@ export default function LiveProfessor() {
         <div className="absolute top-0 left-0 w-full min-h-screen flex flex-col bg-[#F2F6F9]">
             <Header />
             {/* 뒤로가기 버튼 */}
-            <BackButton />
+            <BackButton name={lectureName} />
             <main className="w-full flex-1 flex justify-center">
                 <div className="w-full max-w-[1000px] px-4">                {qas.length === 0 ? (
                     <div className="flex flex-1 items-center justify-center text-center px-8">
@@ -253,7 +255,7 @@ export default function LiveProfessor() {
     )
 }
 
-function BackButton() {
+function BackButton({ name }: { name?: string }) {
     const navigate = useNavigate();
     return (
         <button
@@ -263,7 +265,7 @@ function BackButton() {
             aria-label="뒤로가기"
             type="button"
         >
-            {'<'}
+            {'<'}{name && <span style={{ marginLeft: 8 }}>{name}</span>}
         </button>
     );
 }
