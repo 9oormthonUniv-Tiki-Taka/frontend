@@ -155,38 +155,42 @@ export default function LiveProfessor() {
                                         </Avatar>
                                         <div className="flex-1 min-w-0">
                                             <Card
-                                                className={`group cursor-pointer border-none shadow-none rounded-tl-none ${selectedQuestionId === qa.id ? "ring-1 ring-[#3B6CFF]" : ""
+                                                className={`relative group cursor-pointer border-none shadow-none rounded-tl-none ${selectedQuestionId === qa.id ? "ring-1 ring-[#3B6CFF]" : ""
                                                     }`}
                                                 onClick={() => handleSelectQuestion(qa.id)}
                                             >
+                                                {/* 우측 상단 버튼 그룹 - 호버 시만 표시 */}
+                                                <div className="absolute right-4 top-4 hidden group-hover:flex gap-2 z-10">
+                                                    <button
+                                                        onClick={(e) => { e.stopPropagation(); handleToggleAward(qa.id); }}
+                                                        className="flex items-center gap-1 px-2 py-1 rounded-md bg-white border border-gray-200 shadow-sm hover:bg-gray-200 text-sm"
+                                                    >
+                                                        <img
+                                                            src={qa.awarded ? "/checkAwardIcon.png" : "/normalAwardIcon.png"}
+                                                            alt="award"
+                                                            className="h-6 w-6"
+                                                        />
+                                                    </button>
+                                                    <button
+                                                        onClick={(e) => { e.stopPropagation(); handleToggleFlag(qa.id); }}
+                                                        className="flex items-center gap-1 px-2 py-1 rounded-md bg-white border border-gray-200 shadow-sm hover:bg-gray-200 text-sm"
+                                                    >
+                                                        <img
+                                                            src={qa.flaged ? "/checkFlagIcon.png" : "/normalFlagIcon.png"}
+                                                            alt="flag"
+                                                            className="h-6 w-6"
+                                                        />
+                                                    </button>
+                                                    <button
+                                                        className="flex items-center gap-1 px-2 py-1 rounded-md bg-white border border-gray-200 shadow-sm hover:bg-gray-200 text-sm"
+                                                        onClick={(e) => e.stopPropagation()}
+                                                    >
+                                                        답변 완료
+                                                    </button>
+                                                </div>
                                                 <CardContent className="p-5 pb-3">
                                                     <p className="text-gray-900 whitespace-pre-line text-base leading-relaxed">{qa.question}</p>
                                                     <span className="text-sm text-gray-500 mt-2 block">{qa.timestamp}</span>
-                                                    <div className="hidden group-hover:flex gap-2 mt-3">
-                                                        <button
-                                                            onClick={() => handleToggleAward(qa.id)}
-                                                            className="flex items-center gap-1 px-2 py-1 rounded-md bg-white border border-gray-200 shadow-sm hover:bg-gray-200 text-sm"
-                                                        >
-                                                            <img
-                                                                src={qa.awarded ? "/checkAwardIcon.png" : "/normalAwardIcon.png"}
-                                                                alt="award"
-                                                                className="h-6 w-6"
-                                                            />
-                                                        </button>
-                                                        <button
-                                                            onClick={() => handleToggleFlag(qa.id)}
-                                                            className="flex items-center gap-1 px-2 py-1 rounded-md bg-white border border-gray-200 shadow-sm hover:bg-gray-200 text-sm"
-                                                        >
-                                                            <img
-                                                                src={qa.flaged ? "/checkFlagIcon.png" : "/normalFlagIcon.png"}
-                                                                alt="flag"
-                                                                className="h-6 w-6"
-                                                            />
-                                                        </button>
-                                                        <button className="flex items-center gap-1 px-2 py-1 rounded-md bg-white border border-gray-200 shadow-sm hover:bg-gray-200 text-sm">
-                                                            답변 완료
-                                                        </button>
-                                                    </div>
                                                 </CardContent>
                                             </Card>
                                             <div className="mt-2 flex gap-2">
