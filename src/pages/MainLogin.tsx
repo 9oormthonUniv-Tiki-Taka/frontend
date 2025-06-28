@@ -113,7 +113,6 @@ export function MainLogin() {
         }
     };
 
-    // StudentIdAuth에서 인증 결과를 받아 처리
     const handleAuthResult = async (
         result: "success" | "error" | "existing_user",
         authInfo?: { sub: string; code: string; studentId: string }
