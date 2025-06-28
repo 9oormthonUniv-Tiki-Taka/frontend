@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 // import StudentIdAuth from "@/components/StudentIdAuth";
 
-const API_BASE_URL = 'https://api.tikitaka.o-r.kr';
+const API_BASE_URL = 'http://localhost:8080';
 
 export function OAuthCallback() {
   const navigate = useNavigate();
@@ -32,41 +32,12 @@ export function OAuthCallback() {
         // 가입 필요
         console.log('가입 필요:', { sub });
       
-        // 입력 받은 학번이랑, sub를 post요청 보냄
+        // 일단 sub만 저장
         localStorage.setItem('userSub', sub);
-        
-        try {
-          // 로컬스토리지에서 학번 가져오기
-          const studentId = localStorage.getItem('studentId');
-          
-          if (studentId) {
-            // /auth/code로 POST 요청 보내기 (파라미터로 전달)
-            const response = await fetch(`${API_BASE_URL}/auth/code?sub=${encodeURIComponent(sub)}&studentId=${encodeURIComponent(studentId)}`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              }
-            });
 
-            if (response.ok) {
-              console.log('인증 코드 요청 성공');
-              // StudentIdAuth에서 인증번호 입력 화면을 바로 보여주도록 상태 설정
-              localStorage.setItem('authStatus', 'codeInput');
-              localStorage.setItem('pendingStudentId', studentId);
-              // 메인 페이지로 이동 (StudentIdAuth가 표시됨)
-              navigate('/?need_verification=true');
-            } else {
-              console.error('인증 코드 요청 실패:', response.status);
-              navigate('/?login_failure=true');
-            }
-          } else {
-            console.error('학번이 저장되지 않았습니다');
-            navigate('/?login_failure=true');
-          }
-        } catch (error) {
-          console.error('인증 코드 요청 중 오류:', error);
-          navigate('/?login_failure=true');
-        }
+        // 학번은 아직 입력되지 않았으므로,
+        // 메인 페이지로 이동해서 학번 입력 모달을 띄우도록 유도
+        navigate('/?need_verification=true');
       } else if (message === 'failure') {
         // 로그인 실패
         console.error('로그인 실패');

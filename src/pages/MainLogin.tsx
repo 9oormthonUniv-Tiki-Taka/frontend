@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import StudentIdAuth from "../components/StudentIdAuth";
 import { Dialog, DialogContent } from "../components/ui/dialog";
 import { CircleCheck, XCircle } from "lucide-react";
+import { useLocation, Navigate, useNavigate } from "react-router-dom";
 
 const VAPID_PUBLIC_KEY = "BPLBsiS3Q-aqnk1QB9Y5H6ZcOySv0evIVqDXwDLW18Or0sEPFQUYGZfeBTmWAzTUI9xruBM5rvxizshLpp8mxVY";
 
@@ -26,7 +27,7 @@ async function subscribeUserToPush() {
                 userVisibleOnly: true,
                 applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
             });
-            
+
             try {
                 await fetch(`${API_BASE_URL}/api/save-subscription`, {
                     method: 'POST',
@@ -49,6 +50,22 @@ export function MainLogin() {
     const [email, setEmail] = useState("");
     const [status, setStatus] = useState<"default" | "loading" | "success" | "error" | "existing_user">("default");
     const [showAuthModal, setShowAuthModal] = useState(false);
+
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        if (!showAuthModal && params.get('need_verification') === 'true') {
+            setShowAuthModal(true);
+            params.delete('need_verification');
+            navigate({
+                pathname: location.pathname,
+                search: params.toString()
+            }, { replace: true });
+            }
+    }, [location.search]);
+
 
     useEffect(() => {
         if (email.length > 0 && status !== "success") {
@@ -86,9 +103,10 @@ export function MainLogin() {
 
     const handleSubmit = async () => {
         if (!email || status === "success" || status === "existing_user") return;
-        
+
+        window.location.href = "http://localhost:8080/login";
         // 이메일이 입력되면 StudentIdAuth 모달을 열기
-        setShowAuthModal(true);
+        //setShowAuthModal(true);
     };
 
     const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -160,7 +178,7 @@ export function MainLogin() {
                         티키타카는 교수와 학생이 수업 중 자유롭게 질문하고, <p>
                             실시간으로 소통하며 함께 만들어가는 참여형 학습 서비스 입니다.</p>
                     </h5>
-                    
+
                     <div className="relative w-[700px] max-w-5xl mt-6 mx-auto">
                         <input
                             type="text"
@@ -175,7 +193,6 @@ export function MainLogin() {
                         <button
                             type="button"
                             disabled={!email || status === "success" || status === "existing_user"}
-                            onClick={handleSubmit}
                             className="absolute right-8 top-1/2 -translate-y-1/2 rounded-full w-8 h-8 flex items-center justify-center transition-all duration-200"
                         >
                             {status === "success" ? (
